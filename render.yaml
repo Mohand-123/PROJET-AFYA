@@ -1,0 +1,18 @@
+# Blueprint de déploiement Render pour Afya
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: afya
+    runtime: node
+    region: frankfurt   # le + proche de l'Algérie
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.13.1

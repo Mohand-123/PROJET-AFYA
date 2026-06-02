@@ -11,6 +11,13 @@ const bcrypt = require('bcryptjs');
 const db = require('./db');
 const h = require('./helpers');
 
+// Auto-bootstrap : si la DB vient d'être créée (premier déploiement),
+// on lance le seed une seule fois avant le reste du serveur.
+if (db.dbIsNew) {
+  console.log('→ Base de données vide détectée, initialisation des données réelles…');
+  require('./init-bdd.js');
+}
+
 // --- Tables additionnelles (avis, notifications, abonnements) --------------
 // Créées au démarrage si absentes — pas besoin de relancer init-bdd.
 db.exec(`
@@ -51,6 +58,9 @@ db.exec(`
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Render (et autres PaaS) place l'app derrière un reverse proxy.
+// Indispensable pour que `secure: true` sur le cookie marche en HTTPS.
+app.set('trust proxy', 1);
 
 // --- Vues / statique --------------------------------------------------------
 app.set('view engine', 'ejs');
@@ -59,10 +69,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
-    secret: 'afya-dev-secret-change-me',
+    secret: process.env.SESSION_SECRET || 'afya-dev-secret-change-me',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 },
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    },
+    proxy: true,
   })
 );
 

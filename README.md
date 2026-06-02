@@ -209,6 +209,21 @@ L'attribut `dir="rtl"` est posé automatiquement sur `<html>` quand la langue es
 
 ---
 
+## ☁️ Déploiement sur Render
+
+L'application est prête pour [Render.com](https://render.com) (déploiement gratuit) :
+
+1. Fork ce repo (ou utilise le tien)
+2. Sur Render → **New +** → **Web Service** → connecte ton GitHub
+3. Sélectionne le repo → Render détecte automatiquement le fichier `render.yaml`
+4. Clique **Deploy** — c'est tout 🚀
+
+Le premier déploiement prend ~3 minutes (npm install + init-bdd auto). Ensuite l'app tourne sur `https://afya.onrender.com`.
+
+> ⚠️ Le free tier de Render met en veille après 15 min d'inactivité. La 1ère requête après veille prend ~30 s de réveil.
+
+---
+
 ## 📜 Licence
 
 **MIT** — projet libre et open-source.
