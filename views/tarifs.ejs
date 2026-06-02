@@ -1,0 +1,110 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <div class="center" style="margin-bottom:30px;">
+    <span class="about-badge">💎 <%= t('pricing_badge') %></span>
+    <h1 class="page-title"><%= t('pricing_title') %></h1>
+    <p class="lead"><%= t('pricing_subtitle') %></p>
+  </div>
+
+  <% if (query.ok) { %>
+    <div class="alert alert-ok"><%= t('pricing_signup_ok') %></div>
+  <% } %>
+
+  <div class="pricing-grid reveal-children">
+    <!-- GRATUIT -->
+    <div class="price-card">
+      <div class="price-head">
+        <h3><%= t('plan_free') %></h3>
+        <p class="muted small"><%= t('plan_free_for') %></p>
+      </div>
+      <div class="price">
+        <span class="price-amount">0</span>
+        <span class="price-unit"><%= t('currency') %>/<%= t('pricing_month') %></span>
+      </div>
+      <ul class="price-features">
+        <li>✅ <%= t('plan_free_f1') %></li>
+        <li>✅ <%= t('plan_free_f2') %></li>
+        <li>✅ <%= t('plan_free_f3') %></li>
+        <li class="dim">— <%= t('plan_free_f4') %></li>
+        <li class="dim">— <%= t('plan_free_f5') %></li>
+      </ul>
+      <form action="/tarifs/inscrire" method="post">
+        <input type="hidden" name="plan" value="gratuit" />
+        <input type="hidden" name="cible_type" value="medecin" />
+        <button type="submit" class="btn btn-light btn-block"><%= t('plan_choose') %></button>
+      </form>
+    </div>
+
+    <!-- STANDARD (recommandé) -->
+    <div class="price-card price-popular">
+      <span class="price-badge">⭐ <%= t('plan_popular') %></span>
+      <div class="price-head">
+        <h3><%= t('plan_standard') %></h3>
+        <p class="muted small"><%= t('plan_standard_for') %></p>
+      </div>
+      <div class="price">
+        <span class="price-amount">2 990</span>
+        <span class="price-unit"><%= t('currency') %>/<%= t('pricing_month') %></span>
+      </div>
+      <ul class="price-features">
+        <li>✅ <%= t('plan_standard_f1') %></li>
+        <li>✅ <%= t('plan_standard_f2') %></li>
+        <li>✅ <%= t('plan_standard_f3') %></li>
+        <li>✅ <%= t('plan_standard_f4') %></li>
+        <li>✅ <%= t('plan_standard_f5') %></li>
+        <li>✅ <%= t('plan_standard_f6') %></li>
+        <li class="dim">— <%= t('plan_standard_f7') %></li>
+      </ul>
+      <form action="/tarifs/inscrire" method="post">
+        <input type="hidden" name="plan" value="standard" />
+        <input type="hidden" name="cible_type" value="medecin" />
+        <button type="submit" class="btn btn-primary btn-block">💳 <%= t('plan_choose') %></button>
+      </form>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="price-card price-premium">
+      <div class="price-head">
+        <h3><%= t('plan_premium') %></h3>
+        <p class="muted small"><%= t('plan_premium_for') %></p>
+      </div>
+      <div class="price">
+        <span class="price-amount">6 990</span>
+        <span class="price-unit"><%= t('currency') %>/<%= t('pricing_month') %></span>
+      </div>
+      <ul class="price-features">
+        <li>✅ <%= t('plan_premium_f1') %></li>
+        <li>✅ <%= t('plan_premium_f2') %></li>
+        <li>✅ <%= t('plan_premium_f3') %></li>
+        <li>✅ <%= t('plan_premium_f4') %></li>
+        <li>✅ <%= t('plan_premium_f5') %></li>
+        <li>✅ <%= t('plan_premium_f6') %></li>
+        <li>✅ <%= t('plan_premium_f7') %></li>
+        <li>✅ <%= t('plan_premium_f8') %></li>
+      </ul>
+      <form action="/tarifs/inscrire" method="post">
+        <input type="hidden" name="plan" value="premium" />
+        <input type="hidden" name="cible_type" value="medecin" />
+        <button type="submit" class="btn btn-accent btn-block">🚀 <%= t('plan_choose') %></button>
+      </form>
+    </div>
+  </div>
+
+  <div class="pricing-note reveal">
+    <p class="muted small center">
+      🇩🇿 <%= t('pricing_payment') %> · 💳 <%= t('pricing_payment_methods') %>
+    </p>
+    <p class="muted small center">⚠️ <%= t('pricing_demo_note') %></p>
+  </div>
+
+  <div class="pricing-faq reveal">
+    <h2 class="section-title"><%= t('pricing_faq_title') %></h2>
+    <details class="faq-item"><summary><%= t('pricing_faq1_q') %></summary><p><%= t('pricing_faq1_a') %></p></details>
+    <details class="faq-item"><summary><%= t('pricing_faq2_q') %></summary><p><%= t('pricing_faq2_a') %></p></details>
+    <details class="faq-item"><summary><%= t('pricing_faq3_q') %></summary><p><%= t('pricing_faq3_a') %></p></details>
+    <details class="faq-item"><summary><%= t('pricing_faq4_q') %></summary><p><%= t('pricing_faq4_a') %></p></details>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,119 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <h1 class="page-title">🩺 <%= t('doctors_title') %></h1>
+
+  <form class="filters" action="/medecins" method="get">
+    <select name="specialite">
+      <option value=""><%= t('all_specialites') %></option>
+      <% specialites.forEach(s => { %>
+        <option value="<%= s.id %>" <%= filtres.specialite == s.id ? 'selected' : '' %>><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></option>
+      <% }) %>
+    </select>
+    <select name="wilaya">
+      <option value=""><%= t('all_wilayas') %></option>
+      <% wilayas.forEach(w => { %>
+        <option value="<%= w.nom_fr %>" <%= filtres.wilaya === w.nom_fr ? 'selected' : '' %>><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
+      <% }) %>
+    </select>
+  </form>
+
+  <% if (specCounts && specCounts.length) { %>
+    <div class="chips-row reveal">
+      <p class="chips-label"><%= t('filter_chips_title') %></p>
+      <div class="chips">
+        <% specCounts.forEach(s => { %>
+          <a class="chip <%= filtres.specialite == s.id ? 'on' : '' %>" href="/medecins?specialite=<%= s.id %>">
+            <%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %> <span class="chip-count"><%= s.n %></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <p class="results-count"><%= pagination.total %> <%= t('results_count') %><% if (pagination.nbPages > 1) { %> · <%= t('page') %> <%= pagination.page %>/<%= pagination.nbPages %><% } %></p>
+
+  <% if (!medecins.length) { %>
+    <div class="empty"><%= t('no_results') %></div>
+  <% } else { %>
+    <div class="cards reveal-children">
+      <% medecins.forEach(m => { %>
+        <div class="card doctor-card">
+          <div class="doctor-head">
+            <div class="avatar <%= m.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= m.spec_icone %></div>
+            <div>
+              <h3>Dr <%= m.prenom %> <%= m.nom %></h3>
+              <p class="spec"><%= L(m.spec_fr, m.spec_ar) %></p>
+            </div>
+            <span class="rating">★ <%= m.note.toFixed(1) %></span>
+          </div>
+          <p class="muted">📍 <%= m.ville %>, <%= m.wilaya %></p>
+          <p class="muted addr"><%= m.adresse %></p>
+          <div class="card-tags">
+            <span class="tag tag-price"><%= m.tarif %> <%= t('currency') %></span>
+            <% if (m.accepte_cnas) { %><span class="tag tag-cnas"><%= t('accepts_cnas') %></span><% } %>
+          </div>
+          <a class="btn btn-primary btn-block" href="/medecins/<%= m.id %>"><%= t('doctor_book') %></a>
+        </div>
+      <% }) %>
+    </div>
+
+    <% if (pagination.nbPages > 1) { %>
+      <%- include('partials/pagination', { pagination, baseUrl: '/medecins', extra: { specialite: filtres.specialite, wilaya: filtres.wilaya, q: filtres.q } }) %>
+    <% } %>
+  <% } %>
+
+  <% if (populaires && populaires.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">⭐ <%= t('top_doctors') %></h2>
+      <div class="cards reveal-children">
+        <% populaires.forEach(s => { %>
+          <a class="card doctor-card suggest-card" href="/medecins/<%= s.id %>">
+            <div class="doctor-head">
+              <div class="avatar <%= s.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= s.spec_icone %></div>
+              <div>
+                <h3>Dr <%= s.prenom %> <%= s.nom %></h3>
+                <p class="spec"><%= L(s.spec_fr, s.spec_ar) %></p>
+              </div>
+              <span class="rating">★ <%= s.note.toFixed(1) %></span>
+            </div>
+            <p class="muted">📍 <%= s.ville %>, <%= s.wilaya %></p>
+            <div class="card-tags">
+              <span class="tag tag-price"><%= s.tarif %> <%= t('currency') %></span>
+              <% if (s.accepte_cnas) { %><span class="tag tag-cnas"><%= t('accepts_cnas') %></span><% } %>
+            </div>
+            <span class="link-more"><%= t('doctor_book') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <% if (cnasMedecins && cnasMedecins.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">🛡️ <%= t('top_cnas') %></h2>
+      <div class="cards reveal-children">
+        <% cnasMedecins.forEach(s => { %>
+          <a class="card doctor-card suggest-card" href="/medecins/<%= s.id %>">
+            <div class="doctor-head">
+              <div class="avatar <%= s.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= s.spec_icone %></div>
+              <div>
+                <h3>Dr <%= s.prenom %> <%= s.nom %></h3>
+                <p class="spec"><%= L(s.spec_fr, s.spec_ar) %></p>
+              </div>
+              <span class="rating">★ <%= s.note.toFixed(1) %></span>
+            </div>
+            <p class="muted">📍 <%= s.ville %>, <%= s.wilaya %></p>
+            <div class="card-tags">
+              <span class="tag tag-price"><%= s.tarif %> <%= t('currency') %></span>
+              <span class="tag tag-cnas"><%= t('accepts_cnas') %></span>
+            </div>
+            <span class="link-more"><%= t('doctor_book') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,165 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <span class="hero-pattern" aria-hidden="true"></span>
+  <div class="container">
+    <h1 class="hero-title"><%= t('home_hero_title') %></h1>
+    <p class="hero-sub"><%= t('home_hero_subtitle') %></p>
+
+    <div class="search-card">
+      <div class="search-tabs">
+        <button class="tab active" data-tab="doctor">🩺 <%= t('tab_doctor') %></button>
+        <button class="tab" data-tab="med">💊 <%= t('tab_med') %></button>
+        <button class="tab" data-tab="pharma">🏥 <%= t('tab_pharma') %></button>
+      </div>
+
+      <form class="search-pane active" data-pane="doctor" action="/medecins" method="get">
+        <div class="search-input-wrap">
+          <input type="text" name="q" placeholder="<%= t('ph_doctor') %>" data-suggest="doctor" autocomplete="off" />
+        </div>
+        <select name="specialite">
+          <option value=""><%= t('all_specialites') %></option>
+          <% specialites.forEach(s => { %>
+            <option value="<%= s.id %>"><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></option>
+          <% }) %>
+        </select>
+        <select name="wilaya">
+          <option value=""><%= t('all_wilayas') %></option>
+          <% wilayas.forEach(w => { %><option value="<%= w.nom_fr %>"><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option><% }) %>
+        </select>
+        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
+      </form>
+
+      <form class="search-pane" data-pane="med" action="/medicaments" method="get">
+        <div class="search-input-wrap">
+          <input type="text" name="q" placeholder="<%= t('ph_medicament') %>" data-suggest="med" autocomplete="off" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
+      </form>
+
+      <form class="search-pane" data-pane="pharma" action="/pharmacies" method="get">
+        <div class="search-input-wrap">
+          <input type="text" name="q" placeholder="<%= t('search_pharma_ph') %>" data-suggest="pharma" autocomplete="off" />
+        </div>
+        <select name="wilaya">
+          <option value=""><%= t('all_wilayas') %></option>
+          <% wilayas.forEach(w => { %><option value="<%= w.nom_fr %>"><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option><% }) %>
+        </select>
+        <label class="check"><input type="checkbox" name="garde" value="1" /> <%= t('only_garde') %></label>
+        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="stats-section reveal">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num" data-count="<%= stats.medecins %>">0</div>
+        <div class="stat-label"><%= t('stat_medecins') %></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="<%= stats.pharmacies %>">0</div>
+        <div class="stat-label"><%= t('stat_pharmacies') %></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="<%= stats.medicaments %>">0</div>
+        <div class="stat-label"><%= t('stat_medicaments') %></div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" data-count="<%= stats.wilayas %>">0</div>
+        <div class="stat-label"><%= t('stat_wilayas') %></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section how-section">
+  <h2 class="section-title"><%= t('how_title') %></h2>
+  <p class="lead"><%= t('how_subtitle') %></p>
+  <div class="how-steps reveal-children">
+    <div class="how-step">
+      <div class="how-illu">
+        <span class="how-pulse"></span>
+        <span class="how-ico">🔍</span>
+      </div>
+      <div class="how-num">1</div>
+      <h3><%= t('how_step1_title') %></h3>
+      <p><%= t('how_step1_desc') %></p>
+    </div>
+    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
+    <div class="how-step">
+      <div class="how-illu">
+        <span class="how-pulse"></span>
+        <span class="how-ico">📅</span>
+      </div>
+      <div class="how-num">2</div>
+      <h3><%= t('how_step2_title') %></h3>
+      <p><%= t('how_step2_desc') %></p>
+    </div>
+    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
+    <div class="how-step">
+      <div class="how-illu">
+        <span class="how-pulse"></span>
+        <span class="how-ico">✅</span>
+      </div>
+      <div class="how-num">3</div>
+      <h3><%= t('how_step3_title') %></h3>
+      <p><%= t('how_step3_desc') %></p>
+    </div>
+  </div>
+
+  <div class="heartbeat-banner reveal">
+    <div class="heartbeat-row">
+      <svg class="heartbeat-svg" viewBox="0 0 600 80" preserveAspectRatio="none">
+        <path d="M0 40 L 100 40 L 130 40 L 145 20 L 160 60 L 175 10 L 190 70 L 205 40 L 240 40 L 270 40 L 285 25 L 300 55 L 315 15 L 330 65 L 345 40 L 600 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="heartbeat-content">
+      <span class="heartbeat-icon">❤️</span>
+      <div>
+        <strong><%= t('heartbeat_title') %></strong>
+        <p><%= t('heartbeat_desc') %></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="features reveal">
+    <div class="feature"><span class="feature-ico">📅</span><h3><%= t('feature1_title') %></h3><p><%= t('feature1_desc') %></p></div>
+    <div class="feature"><span class="feature-ico">💊</span><h3><%= t('feature2_title') %></h3><p><%= t('feature2_desc') %></p></div>
+    <div class="feature"><span class="feature-ico">🌙</span><h3><%= t('feature3_title') %></h3><p><%= t('feature3_desc') %></p></div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title"><%= t('home_popular_spec') %></h2>
+  <div class="chips reveal">
+    <% specialites.forEach(s => { %>
+      <a class="chip" href="/medecins?specialite=<%= s.id %>"><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></a>
+    <% }) %>
+  </div>
+</section>
+
+<% if (pharmaGarde.length) { %>
+<section class="container section">
+  <h2 class="section-title">🌙 <%= t('home_garde_title') %></h2>
+  <div class="cards reveal-children">
+    <% pharmaGarde.forEach(p => { %>
+      <a class="card pharma-card" href="/pharmacies/<%= p.id %>">
+        <div class="card-top">
+          <span class="badge badge-garde"><%= t('pharmacy_de_garde') %></span>
+          <span class="badge badge-open"><%= t('open_now') %></span>
+        </div>
+        <h3><%= p.nom %></h3>
+        <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+        <p class="muted">📞 <%= p.telephone %></p>
+      </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/foot') %>

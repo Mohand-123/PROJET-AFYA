@@ -1,0 +1,72 @@
+<%- include('../partials/head') %>
+
+<section class="container section">
+  <div class="pro-header">
+    <h1 class="page-title">🩺 <%= t('pro_med_dashboard') %></h1>
+    <p class="muted">Dr <%= med.prenom %> <%= med.nom %> · <%= med.wilaya %></p>
+  </div>
+
+  <%- include('../partials/pro-nav', { tabs: [
+    { href: '/pro/medecin', label: t('pro_tab_appointments'), icon: '📅', active: false },
+    { href: '/pro/medecin/horaires', label: t('pro_tab_hours'), icon: '🕐', active: false },
+    { href: '/pro/medecin/profil', label: t('pro_tab_profile'), icon: '👤', active: true },
+  ] }) %>
+
+  <% if (ok) { %><div class="alert alert-ok"><%= t('pro_saved') %></div><% } %>
+
+  <form method="post" action="/pro/medecin/profil" class="form pro-form">
+    <h2 class="section-title"><%= t('pro_tab_profile') %></h2>
+
+    <label>
+      <%= t('specialty') %>
+      <select name="specialite_id">
+        <% specialites.forEach(s => { %>
+          <option value="<%= s.id %>" <%= s.id === med.specialite_id ? 'selected' : '' %>>
+            <%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %>
+          </option>
+        <% }) %>
+      </select>
+    </label>
+
+    <div class="form-row">
+      <label>
+        <%= t('tarif') %> (<%= t('currency') %>)
+        <input type="number" name="tarif" min="0" step="50" value="<%= med.tarif %>" required>
+      </label>
+      <label>
+        <%= t('pro_duration_min') %>
+        <input type="number" name="duree_consultation" min="5" max="180" step="5"
+               value="<%= med.duree_consultation %>" required>
+      </label>
+    </div>
+
+    <label class="check">
+      <input type="checkbox" name="accepte_cnas" value="1" <%= med.accepte_cnas ? 'checked' : '' %>>
+      <%= t('accepts_cnas') %>
+    </label>
+
+    <label>
+      <%= t('telephone') %>
+      <input type="text" name="telephone" value="<%= med.telephone || '' %>">
+    </label>
+
+    <label>
+      <%= t('adresse') %>
+      <input type="text" name="adresse" value="<%= med.adresse || '' %>">
+    </label>
+
+    <label>
+      <%= t('pro_bio_fr') %>
+      <textarea name="bio_fr" rows="3"><%= med.bio_fr || '' %></textarea>
+    </label>
+
+    <label>
+      <%= t('pro_bio_ar') %>
+      <textarea name="bio_ar" rows="3" dir="rtl"><%= med.bio_ar || '' %></textarea>
+    </label>
+
+    <button type="submit" class="btn btn-primary"><%= t('pro_save') %></button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

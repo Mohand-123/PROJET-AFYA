@@ -1,0 +1,125 @@
+<%- include('partials/head') %>
+
+<section class="pros-hero">
+  <div class="container">
+    <span class="about-badge">🚀 <%= t('pros_badge') %></span>
+    <h1 class="about-title"><%= t('pros_title') %></h1>
+    <p class="about-lead"><%= t('pros_subtitle') %></p>
+    <div class="pros-cta">
+      <a href="/tarifs" class="btn btn-primary btn-lg">💎 <%= t('pros_see_pricing') %> →</a>
+      <a href="/inscription" class="btn btn-ghost btn-lg"><%= t('pros_signup_free') %></a>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="about-stats reveal">
+    <div class="about-stat"><span class="about-stat-num"><%= stats.medecins.toLocaleString('fr-FR') %>+</span><small><%= t('stat_medecins') %></small></div>
+    <div class="about-stat"><span class="about-stat-num"><%= stats.pharmacies.toLocaleString('fr-FR') %>+</span><small><%= t('stat_pharmacies') %></small></div>
+    <div class="about-stat"><span class="about-stat-num">58</span><small><%= t('stat_wilayas') %></small></div>
+    <div class="about-stat"><span class="about-stat-num">24/7</span><small><%= t('pros_availability') %></small></div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title">🎯 <%= t('pros_benefits_title') %></h2>
+  <div class="values-grid reveal-children">
+    <div class="value-card">
+      <span class="value-ico">📅</span>
+      <h3><%= t('pros_b1_title') %></h3>
+      <p><%= t('pros_b1_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">📲</span>
+      <h3><%= t('pros_b2_title') %></h3>
+      <p><%= t('pros_b2_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">📈</span>
+      <h3><%= t('pros_b3_title') %></h3>
+      <p><%= t('pros_b3_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">⏱️</span>
+      <h3><%= t('pros_b4_title') %></h3>
+      <p><%= t('pros_b4_desc') %></p>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title"><%= t('pros_how_title') %></h2>
+  <div class="how-steps reveal-children">
+    <div class="how-step">
+      <div class="how-illu"><span class="how-pulse"></span><span class="how-ico">📝</span></div>
+      <div class="how-num">1</div>
+      <h3><%= t('pros_step1_title') %></h3>
+      <p><%= t('pros_step1_desc') %></p>
+    </div>
+    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
+    <div class="how-step">
+      <div class="how-illu"><span class="how-pulse"></span><span class="how-ico">⚙️</span></div>
+      <div class="how-num">2</div>
+      <h3><%= t('pros_step2_title') %></h3>
+      <p><%= t('pros_step2_desc') %></p>
+    </div>
+    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
+    <div class="how-step">
+      <div class="how-illu"><span class="how-pulse"></span><span class="how-ico">🚀</span></div>
+      <div class="how-num">3</div>
+      <h3><%= t('pros_step3_title') %></h3>
+      <p><%= t('pros_step3_desc') %></p>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="testimonials reveal-children">
+    <div class="testimonial">
+      <p class="testi-quote"><%= t('pros_testi1_quote') %></p>
+      <div class="testi-author">
+        <div class="avatar avatar-m">🩺</div>
+        <div>
+          <strong>Dr Karim B.</strong>
+          <small class="muted"><%= t('pros_testi1_who') %></small>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <p class="testi-quote"><%= t('pros_testi2_quote') %></p>
+      <div class="testi-author">
+        <div class="avatar avatar-f">💊</div>
+        <div>
+          <strong>Pharm. Yasmina K.</strong>
+          <small class="muted"><%= t('pros_testi2_who') %></small>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <p class="testi-quote"><%= t('pros_testi3_quote') %></p>
+      <div class="testi-author">
+        <div class="avatar avatar-m">🩺</div>
+        <div>
+          <strong>Dr Lounes M.</strong>
+          <small class="muted"><%= t('pros_testi3_who') %></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="team-banner reveal">
+    <span class="team-flag">🇩🇿</span>
+    <div>
+      <h2><%= t('pros_cta_title') %></h2>
+      <p><%= t('pros_cta_desc') %></p>
+      <div class="pros-cta" style="margin-top:14px;">
+        <a href="/tarifs" class="btn btn-primary">💎 <%= t('pros_see_pricing') %></a>
+        <a href="/contact" class="btn btn-ghost">✉️ <%= t('pros_contact_sales') %></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

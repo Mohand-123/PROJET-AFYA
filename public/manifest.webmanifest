@@ -1,0 +1,25 @@
+{
+  "name": "Afya — Votre santé, simplifiée",
+  "short_name": "Afya",
+  "description": "Plateforme santé algérienne : RDV médicaux, pharmacies et médicaments — 58 wilayas couvertes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5f9f9",
+  "theme_color": "#0f9d8e",
+  "lang": "fr",
+  "dir": "auto",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    { "src": "/icons/afya-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/afya-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/afya-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/afya.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Médecins", "short_name": "Médecins", "url": "/medecins", "icons": [{ "src": "/icons/afya-192.png", "sizes": "192x192" }] },
+    { "name": "Pharmacies", "short_name": "Pharmacies", "url": "/pharmacies", "icons": [{ "src": "/icons/afya-192.png", "sizes": "192x192" }] },
+    { "name": "Carte", "short_name": "Carte", "url": "/carte", "icons": [{ "src": "/icons/afya-192.png", "sizes": "192x192" }] }
+  ]
+}

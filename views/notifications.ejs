@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <h1 class="page-title">🔔 <%= t('notifications_title') %></h1>
+
+  <% if (!notifs.length) { %>
+    <div class="empty">
+      <p><%= t('notifications_empty') %></p>
+      <a class="btn btn-primary" href="/medecins"><%= t('book_first') %></a>
+    </div>
+  <% } else { %>
+    <div class="notif-list">
+      <% notifs.forEach(n => { %>
+        <a class="notif-card <%= n.lue ? '' : 'unread' %>" href="<%= n.url || '/mon-compte' %>">
+          <span class="notif-ico">
+            <%= n.type === 'rdv_confirme' ? '✅'
+              : n.type === 'rdv_annule' ? '❌'
+              : n.type === 'rdv_rappel' ? '⏰'
+              : '🔔' %>
+          </span>
+          <div class="notif-body">
+            <h3><%= n.titre %></h3>
+            <% if (n.message) { %><p class="muted"><%= n.message %></p><% } %>
+            <p class="muted small">🕒 <%= n.cree_le %></p>
+          </div>
+          <% if (!n.lue) { %><span class="notif-dot"></span><% } %>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

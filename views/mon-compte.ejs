@@ -1,0 +1,70 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <h1 class="page-title">👤 <%= t('account_hello') %>, <%= user.prenom %></h1>
+
+  <% if (ok === 'booked') { %><div class="alert alert-ok"><%= t('booking_success') %></div><% } %>
+  <% if (ok === 'cancel') { %><div class="alert alert-warn"><%= t('cancel_done') %></div><% } %>
+
+  <h2 class="section-title"><%= t('my_appointments') %></h2>
+
+  <% if (!rdvs.length) { %>
+    <div class="empty">
+      <p><%= t('no_appointments') %></p>
+      <a class="btn btn-primary" href="/medecins"><%= t('book_first') %></a>
+    </div>
+  <% } else { %>
+    <div class="rdv-list">
+      <% rdvs.forEach(r => { %>
+        <div class="card rdv-card <%= r.statut === 'annule' ? 'cancelled' : '' %>">
+          <div class="rdv-icon"><%= r.spec_icone %></div>
+          <div class="rdv-body">
+            <h3>Dr <%= r.m_prenom %> <%= r.m_nom %></h3>
+            <p class="spec"><%= L(r.spec_fr, r.spec_ar) %></p>
+            <p class="muted">📅 <%= t('on_date') %> <strong><%= r.date %></strong> <%= t('at_time') %> <strong><%= r.heure %></strong></p>
+            <p class="muted">📍 <%= r.adresse %>, <%= r.ville %></p>
+            <% if (r.motif) { %><p class="muted small">📝 <%= r.motif %></p><% } %>
+          </div>
+          <div class="rdv-side">
+            <span class="badge <%= r.statut === 'annule' ? 'badge-closed' : 'badge-open' %>">
+              <%= r.statut === 'annule' ? t('statut_annule') : t('statut_confirme') %>
+            </span>
+            <% if (r.statut !== 'annule') { %>
+              <form action="/mon-compte/rdv/<%= r.id %>/annuler" method="post">
+                <button type="submit" class="btn btn-light btn-sm"><%= t('cancel') %></button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (populaires && populaires.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">⭐ <%= t('top_doctors') %></h2>
+      <div class="cards reveal-children">
+        <% populaires.forEach(s => { %>
+          <a class="card doctor-card suggest-card" href="/medecins/<%= s.id %>">
+            <div class="doctor-head">
+              <div class="avatar <%= s.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= s.spec_icone %></div>
+              <div>
+                <h3>Dr <%= s.prenom %> <%= s.nom %></h3>
+                <p class="spec"><%= L(s.spec_fr, s.spec_ar) %></p>
+              </div>
+              <span class="rating">★ <%= s.note.toFixed(1) %></span>
+            </div>
+            <p class="muted">📍 <%= s.ville %>, <%= s.wilaya %></p>
+            <div class="card-tags">
+              <span class="tag tag-price"><%= s.tarif %> <%= t('currency') %></span>
+              <% if (s.accepte_cnas) { %><span class="tag tag-cnas"><%= t('accepts_cnas') %></span><% } %>
+            </div>
+            <span class="link-more"><%= t('doctor_book') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

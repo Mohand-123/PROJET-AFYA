@@ -1,0 +1,77 @@
+<%- include('../partials/head') %>
+
+<section class="container section">
+  <div class="pro-header">
+    <h1 class="page-title">💊 <%= t('pro_pharma_dashboard') %></h1>
+    <p class="muted"><%= pharma.nom %> · <%= pharma.wilaya %></p>
+  </div>
+
+  <%- include('../partials/pro-nav', { tabs: [
+    { href: '/pro/pharmacie', label: t('pro_tab_overview'), icon: '🏠', active: true },
+    { href: '/pro/pharmacie/horaires', label: t('pro_tab_hours'), icon: '🕐', active: false },
+    { href: '/pro/pharmacie/stock', label: t('pro_tab_stock'), icon: '💊', active: false },
+  ] }) %>
+
+  <% if (ok === 'garde') { %><div class="alert alert-ok"><%= t('pro_garde_updated') %></div><% } %>
+  <% if (ok === 'profil') { %><div class="alert alert-ok"><%= t('pro_saved') %></div><% } %>
+
+  <div class="pro-grid">
+    <div class="card">
+      <h3 class="sub"><%= t('pro_status') %></h3>
+      <div class="card-top">
+        <span class="badge <%= ouvert ? 'badge-open' : 'badge-closed' %>">
+          <%= ouvert ? t('open_now') : t('closed_now') %>
+        </span>
+        <% if (pharma.de_garde) { %>
+          <span class="badge badge-garde">⭐ <%= t('pharmacy_de_garde') %></span>
+        <% } %>
+      </div>
+      <form action="/pro/pharmacie/garde" method="post" style="margin-top:10px">
+        <button type="submit" class="btn <%= pharma.de_garde ? 'btn-light' : 'btn-primary' %>">
+          <%= pharma.de_garde ? t('pro_remove_garde') : t('pro_set_garde') %>
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3 class="sub"><%= t('pro_stock_summary') %></h3>
+      <p style="font-size:1.6rem;font-weight:800;color:var(--teal-darker)">
+        <%= nbStock %> / <%= nbTotal %>
+      </p>
+      <p class="muted small"><%= t('pro_stock_summary_desc') %></p>
+      <a href="/pro/pharmacie/stock" class="btn btn-light btn-sm" style="margin-top:8px">
+        <%= t('pro_manage_stock') %> →
+      </a>
+    </div>
+
+    <div class="card">
+      <h3 class="sub"><%= t('pharmacy_hours') %></h3>
+      <table class="hours">
+        <% horaires.forEach((h, i) => { %>
+          <tr class="<%= h.ferme ? 'off' : '' %>">
+            <td><%= daysShort[i] %></td>
+            <td><%= h.texte %></td>
+          </tr>
+        <% }) %>
+      </table>
+      <a href="/pro/pharmacie/horaires" class="btn btn-light btn-sm" style="margin-top:10px">
+        <%= t('pro_edit_hours') %> →
+      </a>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:30px"><%= t('pro_contact_info') %></h2>
+  <form method="post" action="/pro/pharmacie/profil" class="form pro-form">
+    <label>
+      <%= t('telephone') %>
+      <input type="text" name="telephone" value="<%= pharma.telephone || '' %>">
+    </label>
+    <label>
+      <%= t('adresse') %>
+      <input type="text" name="adresse" value="<%= pharma.adresse || '' %>">
+    </label>
+    <button type="submit" class="btn btn-primary"><%= t('pro_save') %></button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

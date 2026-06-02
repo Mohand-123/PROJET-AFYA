@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+
+<section class="container section">
+  <div class="pro-header">
+    <h1 class="page-title">💊 <%= t('pro_pharma_dashboard') %></h1>
+    <p class="muted"><%= pharma.nom %> · <%= pharma.wilaya %></p>
+  </div>
+
+  <%- include('../partials/pro-nav', { tabs: [
+    { href: '/pro/pharmacie', label: t('pro_tab_overview'), icon: '🏠', active: false },
+    { href: '/pro/pharmacie/horaires', label: t('pro_tab_hours'), icon: '🕐', active: true },
+    { href: '/pro/pharmacie/stock', label: t('pro_tab_stock'), icon: '💊', active: false },
+  ] }) %>
+
+  <% if (ok) { %><div class="alert alert-ok"><%= t('pro_saved') %></div><% } %>
+
+  <p class="lead"><%= t('pro_hours_help') %></p>
+
+  <form method="post" action="/pro/pharmacie/horaires" class="pro-form">
+    <table class="hours-edit">
+      <thead>
+        <tr>
+          <th><%= t('pro_day') %></th>
+          <th colspan="2"><%= t('pro_morning') %></th>
+          <th colspan="2"><%= t('pro_afternoon') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let d = 0; d < 7; d++) { %>
+          <tr>
+            <td class="day-cell"><%= daysShort[d] %></td>
+            <td><input type="time" name="day_<%= d %>_m_start" value="<%= horairesForm[d].m_start %>"></td>
+            <td><input type="time" name="day_<%= d %>_m_end"   value="<%= horairesForm[d].m_end %>"></td>
+            <td><input type="time" name="day_<%= d %>_a_start" value="<%= horairesForm[d].a_start %>"></td>
+            <td><input type="time" name="day_<%= d %>_a_end"   value="<%= horairesForm[d].a_end %>"></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <p class="muted small" style="margin-top:10px"><%= t('pro_hours_empty_hint') %></p>
+    <button type="submit" class="btn btn-primary" style="margin-top:14px"><%= t('pro_save') %></button>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

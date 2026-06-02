@@ -1,0 +1,96 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <h1 class="page-title">🏥 <%= t('pharmacies_title') %></h1>
+
+  <form class="filters" action="/pharmacies" method="get">
+    <input type="text" name="q" value="<%= filtres.q %>" placeholder="<%= t('search_pharma_ph') %>" />
+    <select name="wilaya">
+      <option value=""><%= t('all_wilayas') %></option>
+      <% wilayas.forEach(w => { %>
+        <option value="<%= w.nom_fr %>" <%= filtres.wilaya === w.nom_fr ? 'selected' : '' %>><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
+      <% }) %>
+    </select>
+    <label class="check"><input type="checkbox" name="garde" value="1" <%= filtres.garde ? 'checked' : '' %> /> <%= t('only_garde') %></label>
+    <button type="submit" class="btn btn-primary">🔍 <%= t('btn_search') %></button>
+  </form>
+
+  <% if (topWilayas && topWilayas.length) { %>
+    <div class="chips-row reveal">
+      <p class="chips-label"><%= t('filter_wilaya_chips_title') %></p>
+      <div class="chips">
+        <% topWilayas.forEach(w => { %>
+          <a class="chip <%= filtres.wilaya === w.wilaya ? 'on' : '' %>" href="/pharmacies?wilaya=<%= encodeURIComponent(w.wilaya) %>">
+            📍 <%= w.wilaya %> <span class="chip-count"><%= w.n %></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <p class="results-count"><%= pagination.total %> <%= t('results_count') %><% if (pagination.nbPages > 1) { %> · <%= t('page') %> <%= pagination.page %>/<%= pagination.nbPages %><% } %></p>
+
+  <% if (!pharmacies.length) { %>
+    <div class="empty"><%= t('no_results') %></div>
+  <% } else { %>
+    <div class="cards reveal-children">
+      <% pharmacies.forEach(p => { %>
+        <a class="card pharma-card" href="/pharmacies/<%= p.id %>">
+          <div class="card-top">
+            <% if (p.de_garde) { %><span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span><% } %>
+            <span class="badge <%= p.ouvert ? 'badge-open' : 'badge-closed' %>"><%= p.ouvert ? t('open_now') : t('closed_now') %></span>
+          </div>
+          <h3><%= p.nom %></h3>
+          <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+          <p class="muted">📞 <%= p.telephone %></p>
+          <span class="link-more"><%= t('view_pharmacy') %> →</span>
+        </a>
+      <% }) %>
+    </div>
+
+    <% if (pagination.nbPages > 1) { %>
+      <%- include('partials/pagination', { pagination, baseUrl: '/pharmacies', extra: { q: filtres.q, wilaya: filtres.wilaya, garde: filtres.garde } }) %>
+    <% } %>
+  <% } %>
+
+  <% if (populaires && populaires.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">🌙 <%= t('top_pharmacies_garde') %></h2>
+      <div class="cards reveal-children">
+        <% populaires.forEach(p => { %>
+          <a class="card pharma-card suggest-card" href="/pharmacies/<%= p.id %>">
+            <div class="card-top">
+              <span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span>
+              <span class="badge badge-open"><%= t('open_now') %></span>
+            </div>
+            <h3><%= p.nom %></h3>
+            <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+            <% if (p.telephone) { %><p class="muted">📞 <%= p.telephone %></p><% } %>
+            <span class="link-more"><%= t('view_pharmacy') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <% if (aDecouvrir && aDecouvrir.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">✨ <%= t('top_pharmacies_decouvrir') %></h2>
+      <div class="cards reveal-children">
+        <% aDecouvrir.forEach(p => { %>
+          <a class="card pharma-card suggest-card" href="/pharmacies/<%= p.id %>">
+            <div class="card-top">
+              <span class="badge <%= p.ouvert ? 'badge-open' : 'badge-closed' %>"><%= p.ouvert ? t('open_now') : t('closed_now') %></span>
+            </div>
+            <h3><%= p.nom %></h3>
+            <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+            <% if (p.telephone) { %><p class="muted">📞 <%= p.telephone %></p><% } %>
+            <span class="link-more"><%= t('view_pharmacy') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

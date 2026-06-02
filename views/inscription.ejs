@@ -1,0 +1,34 @@
+<%- include('partials/head') %>
+
+<section class="container section narrow">
+  <div class="card auth-card">
+    <h1 class="page-title">🧾 <%= t('register_title') %></h1>
+
+    <% if (err) { %><div class="alert alert-error"><%= err %></div><% } %>
+
+    <form action="/inscription" method="post" class="form">
+      <div class="form-row">
+        <label><%= t('prenom') %>
+          <input type="text" name="prenom" required value="<%= valeurs.prenom || '' %>" />
+        </label>
+        <label><%= t('nom') %>
+          <input type="text" name="nom" required value="<%= valeurs.nom || '' %>" />
+        </label>
+      </div>
+      <label><%= t('email') %>
+        <input type="email" name="email" required value="<%= valeurs.email || '' %>" />
+      </label>
+      <label><%= t('telephone') %>
+        <input type="tel" name="telephone" value="<%= valeurs.telephone || '' %>" />
+      </label>
+      <label><%= t('password') %>
+        <input type="password" name="password" required minlength="4" />
+      </label>
+      <button type="submit" class="btn btn-primary btn-block"><%= t('btn_register') %></button>
+    </form>
+
+    <p class="auth-alt"><%= t('have_account') %> <a href="/connexion"><%= t('btn_login') %></a></p>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

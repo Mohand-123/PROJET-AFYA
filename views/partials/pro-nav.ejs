@@ -1,0 +1,11 @@
+<%
+  // Tabs pour l'espace pro. Param: tabs = [{href, label, icon, active}]
+%>
+<nav class="pro-tabs">
+  <% tabs.forEach(tab => { %>
+    <a href="<%= tab.href %>" class="pro-tab <%= tab.active ? 'active' : '' %>">
+      <span class="pro-tab-ico"><%= tab.icon %></span>
+      <span><%= tab.label %></span>
+    </a>
+  <% }) %>
+</nav>

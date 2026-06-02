@@ -1,0 +1,171 @@
+<%- include('partials/head') %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+<section class="container section">
+  <h1 class="page-title">🗺️ <%= t('map_title') %></h1>
+  <p class="lead"><%= t('map_subtitle') %></p>
+
+  <div class="map-wrap">
+    <aside class="map-controls">
+      <div class="map-control-block">
+        <label class="label"><%= t('all_wilayas') %></label>
+        <select id="mapWilaya">
+          <option value=""><%= t('all_wilayas') %></option>
+          <% wilayas.forEach(w => { %>
+            <option value="<%= w.nom_fr %>" <%= initialWilaya === w.nom_fr ? 'selected' : '' %>><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="map-control-block">
+        <label class="check"><input type="checkbox" id="mapGarde" /> 🌙 <%= t('only_garde') %></label>
+        <label class="check"><input type="checkbox" id="mapOuvert" /> 🟢 <%= t('only_open_now') %></label>
+      </div>
+      <div class="map-stats">
+        <div class="map-stat"><span id="mapCount">0</span><small><%= t('stat_pharmacies') %></small></div>
+        <div class="map-stat"><span id="mapGardeCount">0</span><small>🌙 <%= t('pharmacy_de_garde') %></small></div>
+      </div>
+      <div class="map-legend">
+        <p class="muted small"><strong><%= t('map_legend') %></strong></p>
+        <p class="legend-row"><span class="legend-dot garde"></span> <%= t('pharmacy_de_garde') %></p>
+        <p class="legend-row"><span class="legend-dot open"></span> <%= t('open_now') %></p>
+        <p class="legend-row"><span class="legend-dot closed"></span> <%= t('closed_now') %></p>
+      </div>
+    </aside>
+
+    <div id="map" class="map-container"></div>
+  </div>
+
+  <% if (populaires && populaires.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">🌙 <%= t('top_pharmacies_garde') %></h2>
+      <div class="cards reveal-children">
+        <% populaires.forEach(p => { %>
+          <a class="card pharma-card suggest-card" href="/pharmacies/<%= p.id %>">
+            <div class="card-top">
+              <span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span>
+              <span class="badge badge-open"><%= t('open_now') %></span>
+            </div>
+            <h3><%= p.nom %></h3>
+            <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+            <% if (p.telephone) { %><p class="muted">📞 <%= p.telephone %></p><% } %>
+            <span class="link-more"><%= t('view_pharmacy') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+  // Centre Algérie
+  const map = L.map('map', { minZoom: 5, maxZoom: 18 }).setView([28.0, 2.5], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+
+  // Cluster pour les 2390 markers
+  const cluster = L.markerClusterGroup({
+    chunkedLoading: true,
+    maxClusterRadius: 50,
+    spiderfyOnMaxZoom: true,
+  });
+  map.addLayer(cluster);
+
+  // Icônes selon état
+  const makeIcon = (color) => L.divIcon({
+    className: 'pharma-marker',
+    html: `<span class="marker-pin" style="background:${color}"><span class="marker-cross">✚</span></span>`,
+    iconSize: [30, 38],
+    iconAnchor: [15, 36],
+    popupAnchor: [0, -32],
+  });
+  const iconGarde = makeIcon('#5b51d8');
+  const iconOpen  = makeIcon('#1aa179');
+  const iconClosed = makeIcon('#9aa5a3');
+
+  const T = {
+    open: '<%- t('open_now').replace(/'/g, "\\'") %>',
+    closed: '<%- t('closed_now').replace(/'/g, "\\'") %>',
+    garde: '<%- t('pharmacy_de_garde').replace(/'/g, "\\'") %>',
+    view: '<%- t('view_pharmacy').replace(/'/g, "\\'") %>',
+    loading: '<%- t('map_loading').replace(/'/g, "\\'") %>',
+  };
+
+  const mapWilaya = document.getElementById('mapWilaya');
+  const mapGarde = document.getElementById('mapGarde');
+  const mapOuvert = document.getElementById('mapOuvert');
+  const mapCount = document.getElementById('mapCount');
+  const mapGardeCount = document.getElementById('mapGardeCount');
+
+  let abortCtrl = null;
+  async function loadMarkers() {
+    if (abortCtrl) abortCtrl.abort();
+    abortCtrl = new AbortController();
+    cluster.clearLayers();
+    mapCount.textContent = '…';
+    const params = new URLSearchParams();
+    if (mapWilaya.value) params.set('wilaya', mapWilaya.value);
+    if (mapGarde.checked) params.set('garde', '1');
+    try {
+      const r = await fetch('/api/pharmacies/geojson?' + params, { signal: abortCtrl.signal });
+      const geo = await r.json();
+      const markers = [];
+      let gardeCount = 0;
+      const filterOpen = mapOuvert.checked;
+      const bounds = [];
+      geo.features.forEach((f) => {
+        const p = f.properties;
+        if (filterOpen && !p.ouvert) return;
+        if (p.de_garde) gardeCount++;
+        const icon = p.de_garde ? iconGarde : (p.ouvert ? iconOpen : iconClosed);
+        const [lng, lat] = f.geometry.coordinates;
+        const popup = `
+          <div class="map-popup">
+            ${p.de_garde ? `<span class="badge badge-garde">🌙 ${T.garde}</span>` : ''}
+            <span class="badge ${p.ouvert ? 'badge-open' : 'badge-closed'}">${p.ouvert ? T.open : T.closed}</span>
+            <h4>${escapeHtml(p.nom)}</h4>
+            <p>📍 ${escapeHtml(p.ville)}, ${escapeHtml(p.wilaya)}</p>
+            ${p.adresse ? `<p class="muted small">${escapeHtml(p.adresse)}</p>` : ''}
+            ${p.telephone ? `<p class="muted small">📞 ${escapeHtml(p.telephone)}</p>` : ''}
+            <a class="btn btn-primary btn-sm" href="/pharmacies/${p.id}">${T.view} →</a>
+          </div>`;
+        const m = L.marker([lat, lng], { icon }).bindPopup(popup);
+        markers.push(m);
+        bounds.push([lat, lng]);
+      });
+      cluster.addLayers(markers);
+      mapCount.textContent = markers.length.toLocaleString('fr-FR');
+      mapGardeCount.textContent = gardeCount.toLocaleString('fr-FR');
+      if (bounds.length && mapWilaya.value) {
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+      } else if (!bounds.length) {
+        map.setView([28.0, 2.5], 6);
+      }
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        console.error(e);
+        mapCount.textContent = '0';
+      }
+    }
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  mapWilaya.addEventListener('change', loadMarkers);
+  mapGarde.addEventListener('change', loadMarkers);
+  mapOuvert.addEventListener('change', loadMarkers);
+  loadMarkers();
+</script>
+
+<%- include('partials/foot') %>

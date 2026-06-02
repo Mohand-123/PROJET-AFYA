@@ -1,0 +1,292 @@
+[
+  {
+    "id": "261826c0-f59b-4941-af7b-9c61a3bfab86",
+    "nom": "Adrar",
+    "code": "01"
+  },
+  {
+    "id": "c2644c16-efd4-4681-83b5-b6549f893e59",
+    "nom": "Chlef",
+    "code": "02"
+  },
+  {
+    "id": "0a8c72d7-b637-461b-ace1-ead7d20caf2d",
+    "nom": "Laghouat",
+    "code": "03"
+  },
+  {
+    "id": "bc2fc957-5780-41f7-8ae9-ed934a7fb0bf",
+    "nom": "Oum El Bouaghi",
+    "code": "04"
+  },
+  {
+    "id": "087a84f7-d325-4d9f-bc57-2b839e1c8881",
+    "nom": "Batna",
+    "code": "05"
+  },
+  {
+    "id": "342f4ba9-f4f3-4d36-9139-0bb6ec588a18",
+    "nom": "Béjaïa",
+    "code": "06"
+  },
+  {
+    "id": "7bec9b84-c5a6-4e5b-ba4f-5a45aef4064b",
+    "nom": "Biskra",
+    "code": "07"
+  },
+  {
+    "id": "16728ed4-ccb7-44f0-a090-05970849feff",
+    "nom": "Béchar",
+    "code": "08"
+  },
+  {
+    "id": "84b3e6d3-b984-40fc-a573-efee4e7d84e1",
+    "nom": "Blida",
+    "code": "09"
+  },
+  {
+    "id": "ce881502-5ca8-421b-93b7-5f48d0a53dff",
+    "nom": "Bouira",
+    "code": "10"
+  },
+  {
+    "id": "b463751d-2a03-4afd-b90c-b178009ddb7d",
+    "nom": "Tamanrasset",
+    "code": "11"
+  },
+  {
+    "id": "c548f53d-699b-4e41-895d-5c866cdb1acb",
+    "nom": "Tébessa",
+    "code": "12"
+  },
+  {
+    "id": "7b941e9d-ddd5-4948-b2d8-287dd1368ee0",
+    "nom": "Tlemcen",
+    "code": "13"
+  },
+  {
+    "id": "d5a318fb-175d-465f-aa2c-de0d76de7aa1",
+    "nom": "Tiaret",
+    "code": "14"
+  },
+  {
+    "id": "74a53a44-c42e-49b8-acc8-f9ed4c7df103",
+    "nom": "Tizi Ouzou",
+    "code": "15"
+  },
+  {
+    "id": "799fa779-3e71-43ff-a87b-4ff2f727c31b",
+    "nom": "Alger",
+    "code": "16"
+  },
+  {
+    "id": "f162af5d-3fd8-4413-9c3a-1d5c19977d22",
+    "nom": "Djelfa",
+    "code": "17"
+  },
+  {
+    "id": "8feb676b-a08d-4912-a332-1016424908e0",
+    "nom": "Jijel",
+    "code": "18"
+  },
+  {
+    "id": "e584471a-7c59-4cef-814f-0fb2425c31be",
+    "nom": "Sétif",
+    "code": "19"
+  },
+  {
+    "id": "1178bd70-689d-4c90-accf-1a7969626a4c",
+    "nom": "Saïda",
+    "code": "20"
+  },
+  {
+    "id": "273d18a0-1707-4e59-93f1-f16a62178db0",
+    "nom": "Skikda",
+    "code": "21"
+  },
+  {
+    "id": "5f56c635-8a84-4375-a02a-82542f67d844",
+    "nom": "Sidi Bel Abbès",
+    "code": "22"
+  },
+  {
+    "id": "46456e36-352a-4709-8484-47283e91a3ec",
+    "nom": "Annaba",
+    "code": "23"
+  },
+  {
+    "id": "ca2b55b9-d0c8-4dc0-a578-de3b026e60ce",
+    "nom": "Guelma",
+    "code": "24"
+  },
+  {
+    "id": "0b3c8223-54a1-4646-b962-0a9cf78e0a33",
+    "nom": "Constantine",
+    "code": "25"
+  },
+  {
+    "id": "35722cea-00fa-40f6-914e-ceb685e04a50",
+    "nom": "Médéa",
+    "code": "26"
+  },
+  {
+    "id": "86cea1d8-96b8-4f89-802e-0ad9d6c2a549",
+    "nom": "Mostaganem",
+    "code": "27"
+  },
+  {
+    "id": "9af0fc31-fc53-40ce-97b3-bd7714164956",
+    "nom": "M'Sila",
+    "code": "28"
+  },
+  {
+    "id": "dd244ca3-bdca-48d0-94b0-5d3adf07039d",
+    "nom": "Mascara",
+    "code": "29"
+  },
+  {
+    "id": "e0d97796-e087-4ea8-b2a2-2067b18bd8bc",
+    "nom": "Ouargla",
+    "code": "30"
+  },
+  {
+    "id": "c3b9cff7-61f5-4770-a1c2-0fbb6d44742f",
+    "nom": "Oran",
+    "code": "31"
+  },
+  {
+    "id": "fef7fdfb-17e7-4d31-b86b-70df57698f1f",
+    "nom": "El Bayadh",
+    "code": "32"
+  },
+  {
+    "id": "f685416c-8f1d-4003-9c38-46ca098206e3",
+    "nom": "Illizi",
+    "code": "33"
+  },
+  {
+    "id": "82bc9a0a-dbeb-4996-8471-8bff897c3d7b",
+    "nom": "Bordj Bou Arréridj",
+    "code": "34"
+  },
+  {
+    "id": "705937fd-f0bd-4c69-910b-d540f983de9a",
+    "nom": "Boumerdès",
+    "code": "35"
+  },
+  {
+    "id": "db5874f1-03cd-4a1f-a625-b107ffcc1f8f",
+    "nom": "El Tarf",
+    "code": "36"
+  },
+  {
+    "id": "07545b11-b102-4857-abdc-2bb5435962e5",
+    "nom": "Tindouf",
+    "code": "37"
+  },
+  {
+    "id": "f2758fa8-8a2c-4559-ac8c-5317d8d37677",
+    "nom": "Tissemsilt",
+    "code": "38"
+  },
+  {
+    "id": "648dde89-77e1-4a85-8329-e3843ea0aa20",
+    "nom": "El Oued",
+    "code": "39"
+  },
+  {
+    "id": "99f93045-d5d1-4b30-8630-efb0883b9a80",
+    "nom": "Khenchela",
+    "code": "40"
+  },
+  {
+    "id": "f2d816cd-98a9-4ec7-8979-7c02b282c347",
+    "nom": "Souk Ahras",
+    "code": "41"
+  },
+  {
+    "id": "fc34a37e-0411-43b0-a6fa-9103976cc277",
+    "nom": "Tipaza",
+    "code": "42"
+  },
+  {
+    "id": "e11122c4-bd57-4ff3-ad31-8de1f4e63c3c",
+    "nom": "Mila",
+    "code": "43"
+  },
+  {
+    "id": "d9d38f1b-10f7-4374-8d73-f95a59e4ab11",
+    "nom": "Aïn Defla",
+    "code": "44"
+  },
+  {
+    "id": "d359854b-665f-4b9c-876e-632c20d6b8fc",
+    "nom": "Naâma",
+    "code": "45"
+  },
+  {
+    "id": "b15047c4-854c-43ca-b0d7-92e3dcc157ec",
+    "nom": "Aïn Témouchent",
+    "code": "46"
+  },
+  {
+    "id": "bb7865b7-f202-463a-a648-2b6a3a65b00c",
+    "nom": "Ghardaïa",
+    "code": "47"
+  },
+  {
+    "id": "416fedc9-ce0e-4eb6-aea3-db1d2425014c",
+    "nom": "Relizane",
+    "code": "48"
+  },
+  {
+    "id": "7e027e31-f274-4e02-8ee4-ed1e346fda79",
+    "nom": "El M'Ghair",
+    "code": "49"
+  },
+  {
+    "id": "b84d657c-e982-4e47-9370-6d77fa602b98",
+    "nom": "El Meniaa",
+    "code": "50"
+  },
+  {
+    "id": "0ddaf2ce-95ab-4a5a-8aa9-ef739a5c6139",
+    "nom": "Ouled Djellal",
+    "code": "51"
+  },
+  {
+    "id": "0d2fdb03-abd5-4f19-94ba-cd68501885a2",
+    "nom": "Bordj Baji Mokhtar",
+    "code": "52"
+  },
+  {
+    "id": "7c77252d-6c57-45a8-9c05-f5ac41e1451f",
+    "nom": "Béni Abbès",
+    "code": "53"
+  },
+  {
+    "id": "2781ad5b-b43c-4179-ac9a-a1350a3c08e6",
+    "nom": "Timimoun",
+    "code": "54"
+  },
+  {
+    "id": "11d938d3-1283-404d-bfb2-89e975dbed07",
+    "nom": "Touggourt",
+    "code": "55"
+  },
+  {
+    "id": "ad9c0f60-5dac-4b4b-a00e-9f78ff4c89f0",
+    "nom": "Djanet",
+    "code": "56"
+  },
+  {
+    "id": "22c870e6-7b09-4b7f-9d52-3aa2fe109e21",
+    "nom": "In Salah",
+    "code": "57"
+  },
+  {
+    "id": "bf61b4ab-438a-4536-9d6e-baaaf900f226",
+    "nom": "In Guezzam",
+    "code": "58"
+  }
+]

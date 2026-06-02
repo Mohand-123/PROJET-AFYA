@@ -1,0 +1,167 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <a href="/medecins" class="back-link">← <%= t('back') %></a>
+
+  <div class="detail-grid">
+    <div class="card detail-main">
+      <div class="doctor-head big">
+        <div class="avatar <%= med.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= med.spec_icone %></div>
+        <div>
+          <h1>Dr <%= med.prenom %> <%= med.nom %></h1>
+          <p class="spec"><%= L(med.spec_fr, med.spec_ar) %></p>
+          <span class="rating">★ <%= med.note.toFixed(1) %></span>
+        </div>
+      </div>
+
+      <% if (med.bio_fr) { %>
+        <h3 class="sub"><%= t('about') %></h3>
+        <p><%= L(med.bio_fr, med.bio_ar) %></p>
+      <% } %>
+
+      <ul class="info-list">
+        <li><strong><%= t('adresse') %> :</strong> <%= med.adresse %>, <%= med.ville %>, <%= med.wilaya %></li>
+        <li><strong><%= t('telephone') %> :</strong> <%= med.telephone %></li>
+        <li><strong><%= t('tarif') %> :</strong> <%= med.tarif %> <%= t('currency') %></li>
+        <% if (med.accepte_cnas) { %><li><span class="tag tag-cnas"><%= t('accepts_cnas') %></span></li><% } %>
+      </ul>
+
+      <h3 class="sub"><%= t('doctor_hours') %></h3>
+      <table class="hours">
+        <% horaires.forEach(h => { %>
+          <tr class="<%= h.ferme ? 'off' : '' %>"><td><%= h.jour %></td><td><%= h.texte %></td></tr>
+        <% }) %>
+      </table>
+    </div>
+
+    <div class="card detail-side">
+      <h2 class="sub"><%= t('book_title') %></h2>
+
+      <% if (msg === 'slot_taken') { %>
+        <div class="alert alert-warn"><%= t('slot_taken') %></div>
+      <% } %>
+
+      <% if (!joursOuverts.length) { %>
+        <p class="muted"><%= t('no_slots') %></p>
+      <% } else { %>
+        <p class="label"><%= t('choose_date') %></p>
+        <div class="date-pills">
+          <% joursOuverts.forEach(j => { %>
+            <a class="date-pill <%= j.date === dateSel ? 'on' : '' %>" href="/medecins/<%= med.id %>?date=<%= j.date %>">
+              <span class="d-jour"><%= j.jour %></span>
+              <span class="d-num"><%= j.num %></span>
+            </a>
+          <% }) %>
+        </div>
+
+        <% if (!creneaux.length) { %>
+          <p class="muted"><%= t('no_slots') %></p>
+        <% } else if (!user) { %>
+          <div class="slots preview">
+            <% creneaux.slice(0,8).forEach(c => { %><span class="slot disabled"><%= c %></span><% }) %>
+          </div>
+          <a class="btn btn-primary btn-block" href="/connexion?next=<%= encodeURIComponent('/medecins/' + med.id + '?date=' + dateSel) %>"><%= t('login_to_book') %></a>
+        <% } else { %>
+          <form action="/medecins/<%= med.id %>/reserver" method="post" class="booking-form">
+            <input type="hidden" name="date" value="<%= dateSel %>" />
+            <p class="label"><%= t('available_slots') %></p>
+            <div class="slots">
+              <% creneaux.forEach((c, i) => { %>
+                <label class="slot">
+                  <input type="radio" name="heure" value="<%= c %>" <%= i === 0 ? 'required' : '' %> />
+                  <span><%= c %></span>
+                </label>
+              <% }) %>
+            </div>
+            <p class="label"><%= t('motif') %></p>
+            <textarea name="motif" rows="2" placeholder="<%= t('motif_ph') %>"></textarea>
+            <button type="submit" class="btn btn-primary btn-block"><%= t('confirm_booking') %></button>
+          </form>
+        <% } %>
+      <% } %>
+    </div>
+  </div>
+
+  <div id="avis" class="card avis-section reveal">
+    <div class="avis-head">
+      <div>
+        <h2 class="sub">⭐ <%= t('reviews_title') %></h2>
+        <% if (avisAgg.n > 0) { %>
+          <p class="avis-summary">
+            <strong class="avis-big"><%= avisAgg.m.toFixed(1) %></strong>
+            <span class="avis-stars-display">
+              <% for (let i=1; i<=5; i++) { %><span class="<%= i <= Math.round(avisAgg.m) ? 'star on' : 'star' %>">★</span><% } %>
+            </span>
+            <span class="muted"><%= avisAgg.n %> <%= t('reviews_count') %></span>
+          </p>
+        <% } else { %>
+          <p class="muted"><%= t('reviews_none') %></p>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (msg === 'avis_ok') { %><div class="alert alert-ok"><%= t('reviews_thanks') %></div><% } %>
+
+    <% if (user && canReview) { %>
+      <form action="/medecins/<%= med.id %>/avis" method="post" class="avis-form">
+        <p class="label"><%= monAvis ? t('reviews_edit') : t('reviews_leave') %></p>
+        <div class="star-rating">
+          <% for (let i=5; i>=1; i--) { %>
+            <input type="radio" name="note" id="star<%= i %>" value="<%= i %>" <%= (monAvis && monAvis.note === i) ? 'checked' : (i === 5 && !monAvis ? 'checked' : '') %> required />
+            <label for="star<%= i %>" title="<%= i %>">★</label>
+          <% } %>
+        </div>
+        <textarea name="commentaire" rows="3" maxlength="600" placeholder="<%= t('reviews_placeholder') %>"><%= monAvis ? monAvis.commentaire : '' %></textarea>
+        <button type="submit" class="btn btn-primary"><%= monAvis ? t('reviews_update') : t('reviews_submit') %></button>
+      </form>
+    <% } else if (!user) { %>
+      <p class="muted small"><%= t('reviews_login_to_post') %> <a href="/connexion?next=/medecins/<%= med.id %>"><%= t('btn_login') %></a></p>
+    <% } else { %>
+      <p class="muted small"><%= t('reviews_need_rdv') %></p>
+    <% } %>
+
+    <% if (avis.length) { %>
+      <div class="avis-list">
+        <% avis.forEach(a => { %>
+          <div class="avis-item">
+            <div class="avis-item-head">
+              <strong><%= a.prenom %> <%= a.nom.charAt(0) %>.</strong>
+              <span class="avis-stars-display">
+                <% for (let i=1; i<=5; i++) { %><span class="<%= i <= a.note ? 'star on' : 'star' %>">★</span><% } %>
+              </span>
+              <span class="muted small"><%= a.cree_le.slice(0, 10) %></span>
+            </div>
+            <% if (a.commentaire) { %><p><%= a.commentaire %></p><% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (suggestions && suggestions.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title"><%= t('suggest_doctors') %></h2>
+      <div class="cards reveal-children">
+        <% suggestions.forEach(s => { %>
+          <a class="card doctor-card suggest-card" href="/medecins/<%= s.id %>">
+            <div class="doctor-head">
+              <div class="avatar <%= s.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= s.spec_icone %></div>
+              <div>
+                <h3>Dr <%= s.prenom %> <%= s.nom %></h3>
+                <p class="spec"><%= L(s.spec_fr, s.spec_ar) %></p>
+              </div>
+              <span class="rating">★ <%= s.note.toFixed(1) %></span>
+            </div>
+            <p class="muted">📍 <%= s.ville %></p>
+            <div class="card-tags">
+              <span class="tag tag-price"><%= s.tarif %> <%= t('currency') %></span>
+            </div>
+            <span class="link-more"><%= t('doctor_book') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

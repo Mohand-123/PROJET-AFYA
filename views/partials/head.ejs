@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= dir %>" data-theme="<%= theme %>">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Afya · <%= t('tagline') %></title>
+  <meta name="description" content="Afya — <%= t('home_hero_subtitle') %>" />
+  <meta name="theme-color" content="<%= theme === 'dark' ? '#0a1816' : '#0f9d8e' %>" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/icons/afya.svg" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-name">Afya<small>عافية</small></span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="/medecins" class="<%= path.startsWith('/medecins') ? 'active' : '' %>"><%= t('nav_doctors') %></a>
+        <a href="/pharmacies" class="<%= path.startsWith('/pharmacies') ? 'active' : '' %>"><%= t('nav_pharmacies') %></a>
+        <a href="/medicaments" class="<%= path.startsWith('/medicaments') ? 'active' : '' %>"><%= t('nav_medicaments') %></a>
+        <a href="/carte" class="<%= path.startsWith('/carte') ? 'active' : '' %>">🗺️ <%= t('nav_map') %></a>
+        <a href="/contact" class="<%= path.startsWith('/contact') ? 'active' : '' %>">✉️ <%= t('nav_contact') %></a>
+        <a href="/pour-les-pros" class="<%= path.startsWith('/pour-les-pros') || path.startsWith('/tarifs') ? 'active' : '' %>">💼 <%= t('nav_pros') %></a>
+
+        <div class="nav-right">
+          <a href="/theme/<%= theme === 'dark' ? 'light' : 'dark' %>" class="theme-toggle" title="<%= theme === 'dark' ? '☀️' : '🌙' %>" aria-label="theme">
+            <%= theme === 'dark' ? '☀️' : '🌙' %>
+          </a>
+          <div class="lang-switch">
+            <a href="/langue/fr" class="<%= lang === 'fr' ? 'on' : '' %>">FR</a>
+            <a href="/langue/ar" class="<%= lang === 'ar' ? 'on' : '' %>">ع</a>
+          </div>
+          <% if (user) { %>
+            <a href="/notifications" class="notif-bell" aria-label="notifications">
+              🔔
+              <% if (nbNotifs > 0) { %><span class="notif-badge"><%= nbNotifs > 9 ? '9+' : nbNotifs %></span><% } %>
+            </a>
+            <% if (user.role === 'medecin') { %>
+              <a href="/pro/medecin" class="btn btn-ghost">🩺 <%= t('pro_dashboard') %></a>
+            <% } else if (user.role === 'pharmacien') { %>
+              <a href="/pro/pharmacie" class="btn btn-ghost">💊 <%= t('pro_dashboard') %></a>
+            <% } else { %>
+              <a href="/mon-compte" class="btn btn-ghost"><%= t('nav_account') %></a>
+            <% } %>
+            <form action="/deconnexion" method="post" class="inline-form">
+              <button type="submit" class="btn btn-light"><%= t('nav_logout') %></button>
+            </form>
+          <% } else { %>
+            <a href="/connexion" class="btn btn-ghost"><%= t('nav_login') %></a>
+            <a href="/inscription" class="btn btn-primary"><%= t('nav_register') %></a>
+          <% } %>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main>

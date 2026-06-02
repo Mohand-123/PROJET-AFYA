@@ -1,0 +1,118 @@
+<%- include('partials/head') %>
+
+<section class="about-hero">
+  <div class="container">
+    <span class="about-badge">✚ Afya · عافية</span>
+    <h1 class="about-title"><%= t('about_title') %></h1>
+    <p class="about-lead"><%= t('about_hero') %></p>
+    <a href="/" class="btn btn-primary"><%= t('about_cta') %> →</a>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="about-stats reveal">
+    <div class="about-stat"><span class="about-stat-num"><%= stats.medecins.toLocaleString('fr-FR') %></span><small><%= t('stat_medecins') %></small></div>
+    <div class="about-stat"><span class="about-stat-num"><%= stats.pharmacies.toLocaleString('fr-FR') %></span><small><%= t('stat_pharmacies') %></small></div>
+    <div class="about-stat"><span class="about-stat-num"><%= stats.medicaments.toLocaleString('fr-FR') %></span><small><%= t('stat_medicaments') %></small></div>
+    <div class="about-stat"><span class="about-stat-num"><%= stats.wilayas %></span><small><%= t('stat_wilayas') %></small></div>
+    <div class="about-stat"><span class="about-stat-num"><%= stats.specialites %></span><small><%= t('home_popular_spec') %></small></div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="about-grid reveal">
+    <div class="card about-card">
+      <span class="about-ico">🎯</span>
+      <h2><%= t('about_mission_title') %></h2>
+      <p><%= t('about_mission_desc') %></p>
+    </div>
+    <div class="card about-card">
+      <span class="about-ico">🔭</span>
+      <h2><%= t('about_vision_title') %></h2>
+      <p><%= t('about_vision_desc') %></p>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title"><%= t('about_values_title') %></h2>
+  <div class="values-grid reveal-children">
+    <div class="value-card">
+      <span class="value-ico">🛡️</span>
+      <h3><%= t('about_value_1_title') %></h3>
+      <p><%= t('about_value_1_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">🌍</span>
+      <h3><%= t('about_value_2_title') %></h3>
+      <p><%= t('about_value_2_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">🗺️</span>
+      <h3><%= t('about_value_3_title') %></h3>
+      <p><%= t('about_value_3_desc') %></p>
+    </div>
+    <div class="value-card">
+      <span class="value-ico">💚</span>
+      <h3><%= t('about_value_4_title') %></h3>
+      <p><%= t('about_value_4_desc') %></p>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <div class="team-banner reveal">
+    <span class="team-flag">🇩🇿</span>
+    <div>
+      <h2><%= t('about_team_title') %></h2>
+      <p><%= t('about_team_desc') %></p>
+    </div>
+  </div>
+</section>
+
+<% if (topMedecins && topMedecins.length) { %>
+  <section class="container section">
+    <div class="suggest-section reveal">
+      <h2 class="section-title">⭐ <%= t('top_doctors') %></h2>
+      <div class="cards reveal-children">
+        <% topMedecins.forEach(s => { %>
+          <a class="card doctor-card suggest-card" href="/medecins/<%= s.id %>">
+            <div class="doctor-head">
+              <div class="avatar <%= s.sexe === 'F' ? 'avatar-f' : 'avatar-m' %>"><%= s.spec_icone %></div>
+              <div>
+                <h3>Dr <%= s.prenom %> <%= s.nom %></h3>
+                <p class="spec"><%= L(s.spec_fr, s.spec_ar) %></p>
+              </div>
+              <span class="rating">★ <%= s.note.toFixed(1) %></span>
+            </div>
+            <p class="muted">📍 <%= s.ville %>, <%= s.wilaya %></p>
+            <span class="link-more"><%= t('doctor_book') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<% if (topPharmacies && topPharmacies.length) { %>
+  <section class="container section">
+    <div class="suggest-section reveal">
+      <h2 class="section-title">🌙 <%= t('top_pharmacies_garde') %></h2>
+      <div class="cards reveal-children">
+        <% topPharmacies.forEach(p => { %>
+          <a class="card pharma-card suggest-card" href="/pharmacies/<%= p.id %>">
+            <div class="card-top">
+              <span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span>
+              <span class="badge badge-open"><%= t('open_now') %></span>
+            </div>
+            <h3><%= p.nom %></h3>
+            <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+            <span class="link-more"><%= t('view_pharmacy') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<%- include('partials/foot') %>

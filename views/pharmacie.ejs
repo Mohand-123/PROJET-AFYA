@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <a href="/pharmacies" class="back-link">← <%= t('back') %></a>
+
+  <div class="detail-grid">
+    <div class="card detail-main">
+      <div class="card-top">
+        <% if (pharma.de_garde) { %><span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span><% } %>
+        <span class="badge <%= ouvert ? 'badge-open' : 'badge-closed' %>"><%= ouvert ? t('open_now') : t('closed_now') %></span>
+      </div>
+      <h1><%= pharma.nom %></h1>
+      <ul class="info-list">
+        <li><strong><%= t('adresse') %> :</strong> <%= pharma.adresse %>, <%= pharma.ville %>, <%= pharma.wilaya %></li>
+        <li><strong><%= t('telephone') %> :</strong> <%= pharma.telephone %></li>
+      </ul>
+
+      <h3 class="sub"><%= t('pharmacy_hours') %></h3>
+      <table class="hours">
+        <% horaires.forEach(h => { %>
+          <tr class="<%= h.ferme ? 'off' : '' %>"><td><%= h.jour %></td><td><%= h.texte %></td></tr>
+        <% }) %>
+      </table>
+    </div>
+
+    <div class="card detail-side">
+      <h2 class="sub">💊 <%= t('view_stock') %></h2>
+      <form class="filters compact" action="/pharmacies/<%= pharma.id %>" method="get">
+        <input type="text" name="q" value="<%= q %>" placeholder="<%= t('med_search_ph') %>" />
+        <button type="submit" class="btn btn-primary">🔍</button>
+      </form>
+
+      <% if (!stock.length) { %>
+        <p class="muted"><%= t('no_results') %></p>
+      <% } else { %>
+        <ul class="stock-list">
+          <% stock.forEach(s => { %>
+            <li class="stock-row">
+              <div class="stock-info">
+                <a href="/medicaments/<%= s.id %>" class="med-name"><%= L(s.nom_fr, s.nom_ar) %></a>
+                <span class="muted small"><%= s.dci %> · <%= s.dosage %></span>
+              </div>
+              <div class="stock-right">
+                <% if (s.disponible) { %>
+                  <span class="dot ok"></span><span class="avail"><%= t('available') %></span>
+                  <span class="price"><%= s.prix %> <%= t('currency') %></span>
+                <% } else { %>
+                  <span class="dot no"></span><span class="unavail"><%= t('unavailable') %></span>
+                <% } %>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (suggestions && suggestions.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title"><%= t('suggest_pharmacies') %></h2>
+      <div class="cards reveal-children">
+        <% suggestions.forEach(s => { %>
+          <a class="card pharma-card suggest-card" href="/pharmacies/<%= s.id %>">
+            <div class="card-top">
+              <% if (s.de_garde) { %><span class="badge badge-garde">🌙 <%= t('pharmacy_de_garde') %></span><% } %>
+              <span class="badge <%= s.ouvert ? 'badge-open' : 'badge-closed' %>"><%= s.ouvert ? t('open_now') : t('closed_now') %></span>
+            </div>
+            <h3><%= s.nom %></h3>
+            <p class="muted">📍 <%= s.ville %></p>
+            <% if (s.telephone) { %><p class="muted">📞 <%= s.telephone %></p><% } %>
+            <span class="link-more"><%= t('view_pharmacy') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

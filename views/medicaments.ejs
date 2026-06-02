@@ -1,0 +1,103 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <h1 class="page-title">💊 <%= t('med_title') %></h1>
+  <p class="lead"><%= t('med_intro') %></p>
+
+  <form class="filters" action="/medicaments" method="get">
+    <input type="text" name="q" value="<%= q %>" placeholder="<%= t('med_search_ph') %>" />
+    <select name="rx">
+      <option value=""    <%= rx === ''  ? 'selected' : '' %>><%= t('med_filter_all') %></option>
+      <option value="0"   <%= rx === '0' ? 'selected' : '' %>><%= t('otc') %></option>
+      <option value="1"   <%= rx === '1' ? 'selected' : '' %>><%= t('prescription_required') %></option>
+    </select>
+    <button type="submit" class="btn btn-primary">🔍 <%= t('btn_search') %></button>
+  </form>
+
+  <% if (topDci && topDci.length) { %>
+    <div class="chips-row reveal">
+      <p class="chips-label"><%= t('filter_dci_chips_title') %></p>
+      <div class="chips">
+        <% topDci.forEach(d => { %>
+          <a class="chip <%= q === d.dci ? 'on' : '' %>" href="/medicaments?q=<%= encodeURIComponent(d.dci) %>">
+            🧬 <%= d.dci %> <span class="chip-count"><%= d.n %></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <p class="results-count"><%= pagination.total %> <%= t('results_count') %><% if (pagination.nbPages > 1) { %> · <%= t('page') %> <%= pagination.page %>/<%= pagination.nbPages %><% } %></p>
+
+  <% if (!medicaments.length) { %>
+    <div class="empty"><%= t('no_results') %></div>
+  <% } else { %>
+    <div class="cards reveal-children">
+      <% medicaments.forEach(m => { %>
+        <a class="card med-card" href="/medicaments/<%= m.id %>">
+          <div class="card-top">
+            <% if (m.sur_ordonnance) { %><span class="badge badge-rx"><%= t('prescription_required') %></span>
+            <% } else { %><span class="badge badge-otc"><%= t('otc') %></span><% } %>
+          </div>
+          <h3><%= L(m.nom_fr, m.nom_ar) %></h3>
+          <p class="muted small"><%= m.dci %><% if (m.forme) { %> · <%= m.forme %><% } %><% if (m.dosage) { %> <%= m.dosage %><% } %></p>
+          <p class="avail-count">
+            <% if (m.nb_dispo > 0) { %>
+              <span class="dot ok"></span> <%= t('available_in', { n: m.nb_dispo }) %>
+            <% } else { %>
+              <span class="dot no"></span> <%= t('unavailable') %>
+            <% } %>
+          </p>
+          <span class="link-more"><%= t('where_to_find') %> →</span>
+        </a>
+      <% }) %>
+    </div>
+
+    <% if (pagination.nbPages > 1) { %>
+      <%- include('partials/pagination', { pagination, baseUrl: '/medicaments', extra: { q, rx } }) %>
+    <% } %>
+  <% } %>
+
+  <% if (populaires && populaires.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">🔥 <%= t('top_meds') %></h2>
+      <div class="cards reveal-children">
+        <% populaires.forEach(m => { %>
+          <a class="card med-card suggest-card" href="/medicaments/<%= m.id %>">
+            <div class="card-top">
+              <% if (m.sur_ordonnance) { %><span class="badge badge-rx"><%= t('prescription_required') %></span>
+              <% } else { %><span class="badge badge-otc"><%= t('otc') %></span><% } %>
+            </div>
+            <h3><%= L(m.nom_fr, m.nom_ar || m.nom_fr) %></h3>
+            <p class="muted"><strong><%= m.dci %></strong></p>
+            <p class="muted small"><%= m.forme %><%= m.dosage ? ' · ' + m.dosage : '' %></p>
+            <p class="avail-count"><span class="dot ok"></span> <%= t('available_in', { n: m.nb_dispo }) %></p>
+            <span class="link-more"><%= t('where_to_find') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <% if (sansOrdo && sansOrdo.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title">✅ <%= t('top_otc') %></h2>
+      <div class="cards reveal-children">
+        <% sansOrdo.forEach(m => { %>
+          <a class="card med-card suggest-card" href="/medicaments/<%= m.id %>">
+            <div class="card-top">
+              <span class="badge badge-otc"><%= t('otc') %></span>
+            </div>
+            <h3><%= L(m.nom_fr, m.nom_ar || m.nom_fr) %></h3>
+            <p class="muted"><strong><%= m.dci %></strong></p>
+            <p class="muted small"><%= m.forme %><%= m.dosage ? ' · ' + m.dosage : '' %></p>
+            <p class="avail-count"><span class="dot ok"></span> <%= t('available_in', { n: m.nb_dispo }) %></p>
+            <span class="link-more"><%= t('where_to_find') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

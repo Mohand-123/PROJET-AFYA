@@ -1,0 +1,11 @@
+node_modules/
+afya.db
+afya.db-wal
+afya.db-shm
+.env
+.env.local
+.vercel/
+npm-debug.log*
+*.log
+.DS_Store
+data/yajid-*

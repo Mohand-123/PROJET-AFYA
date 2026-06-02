@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+
+<section class="container section">
+  <div class="pro-header">
+    <h1 class="page-title">🩺 <%= t('pro_med_dashboard') %></h1>
+    <p class="muted">Dr <%= med.prenom %> <%= med.nom %> — <%= L(med.spec_fr, med.spec_ar) %> · <%= med.wilaya %></p>
+  </div>
+
+  <%- include('../partials/pro-nav', { tabs: [
+    { href: '/pro/medecin', label: t('pro_tab_appointments'), icon: '📅', active: true },
+    { href: '/pro/medecin/horaires', label: t('pro_tab_hours'), icon: '🕐', active: false },
+    { href: '/pro/medecin/profil', label: t('pro_tab_profile'), icon: '👤', active: false },
+  ] }) %>
+
+  <% if (ok === 'cancel') { %><div class="alert alert-warn"><%= t('cancel_done') %></div><% } %>
+
+  <h2 class="section-title"><%= t('pro_upcoming') %> <span class="muted small">(<%= rdvs.filter(r => r.statut !== 'annule').length %>)</span></h2>
+
+  <% if (!rdvs.length) { %>
+    <div class="empty"><p><%= t('pro_no_upcoming') %></p></div>
+  <% } else { %>
+    <div class="rdv-list">
+      <% rdvs.forEach(r => { %>
+        <div class="card rdv-card <%= r.statut === 'annule' ? 'cancelled' : '' %>">
+          <div class="rdv-icon">👤</div>
+          <div class="rdv-body">
+            <h3><%= r.p_prenom %> <%= r.p_nom %></h3>
+            <p class="muted">📅 <strong><%= r.date %></strong> <%= t('at_time') %> <strong><%= r.heure %></strong></p>
+            <% if (r.p_tel) { %><p class="muted small">📞 <%= r.p_tel %></p><% } %>
+            <% if (r.p_email) { %><p class="muted small">✉️ <%= r.p_email %></p><% } %>
+            <% if (r.motif) { %><p class="muted small">📝 <%= r.motif %></p><% } %>
+          </div>
+          <div class="rdv-side">
+            <span class="badge <%= r.statut === 'annule' ? 'badge-closed' : 'badge-open' %>">
+              <%= r.statut === 'annule' ? t('statut_annule') : t('statut_confirme') %>
+            </span>
+            <% if (r.statut !== 'annule') { %>
+              <form action="/pro/medecin/rdv/<%= r.id %>/annuler" method="post"
+                    onsubmit="return confirm('<%= t('pro_confirm_cancel') %>')">
+                <button type="submit" class="btn btn-light btn-sm"><%= t('cancel') %></button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/foot') %>

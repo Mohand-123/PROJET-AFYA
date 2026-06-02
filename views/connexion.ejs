@@ -1,0 +1,25 @@
+<%- include('partials/head') %>
+
+<section class="container section narrow">
+  <div class="card auth-card">
+    <h1 class="page-title">🔐 <%= t('login_title') %></h1>
+
+    <% if (err) { %><div class="alert alert-error"><%= err %></div><% } %>
+
+    <form action="/connexion" method="post" class="form">
+      <input type="hidden" name="next" value="<%= next %>" />
+      <label><%= t('email') %>
+        <input type="email" name="email" required value="demo@afya.dz" />
+      </label>
+      <label><%= t('password') %>
+        <input type="password" name="password" required />
+      </label>
+      <button type="submit" class="btn btn-primary btn-block"><%= t('btn_login') %></button>
+    </form>
+
+    <p class="demo-hint"><%= t('demo_hint') %></p>
+    <p class="auth-alt"><%= t('no_account') %> <a href="/inscription"><%= t('btn_register') %></a></p>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

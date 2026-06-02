@@ -1,0 +1,32 @@
+<%
+  function buildUrl(p) {
+    const params = new URLSearchParams();
+    for (const k in (extra || {})) if (extra[k]) params.set(k, extra[k]);
+    if (p > 1) params.set('page', p);
+    const qs = params.toString();
+    return baseUrl + (qs ? '?' + qs : '');
+  }
+  const cur = pagination.page;
+  const total = pagination.nbPages;
+  const win = [];
+  for (let i = Math.max(1, cur - 2); i <= Math.min(total, cur + 2); i++) win.push(i);
+%>
+<nav class="pagination" aria-label="pagination">
+  <% if (cur > 1) { %><a class="page-btn" href="<%= buildUrl(cur - 1) %>">←</a><% } %>
+  <% if (win[0] > 1) { %>
+    <a class="page-btn" href="<%= buildUrl(1) %>">1</a>
+    <% if (win[0] > 2) { %><span class="page-ellipsis">…</span><% } %>
+  <% } %>
+  <% win.forEach(i => { %>
+    <% if (i === cur) { %>
+      <span class="page-btn on"><%= i %></span>
+    <% } else { %>
+      <a class="page-btn" href="<%= buildUrl(i) %>"><%= i %></a>
+    <% } %>
+  <% }) %>
+  <% if (win[win.length - 1] < total) { %>
+    <% if (win[win.length - 1] < total - 1) { %><span class="page-ellipsis">…</span><% } %>
+    <a class="page-btn" href="<%= buildUrl(total) %>"><%= total %></a>
+  <% } %>
+  <% if (cur < total) { %><a class="page-btn" href="<%= buildUrl(cur + 1) %>">→</a><% } %>
+</nav>

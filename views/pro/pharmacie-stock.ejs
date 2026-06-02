@@ -1,0 +1,62 @@
+<%- include('../partials/head') %>
+
+<section class="container section">
+  <div class="pro-header">
+    <h1 class="page-title">💊 <%= t('pro_pharma_dashboard') %></h1>
+    <p class="muted"><%= pharma.nom %> · <%= pharma.wilaya %></p>
+  </div>
+
+  <%- include('../partials/pro-nav', { tabs: [
+    { href: '/pro/pharmacie', label: t('pro_tab_overview'), icon: '🏠', active: false },
+    { href: '/pro/pharmacie/horaires', label: t('pro_tab_hours'), icon: '🕐', active: false },
+    { href: '/pro/pharmacie/stock', label: t('pro_tab_stock'), icon: '💊', active: true },
+  ] }) %>
+
+  <% if (ok) { %><div class="alert alert-ok"><%= t('pro_saved') %></div><% } %>
+
+  <p class="lead"><%= t('pro_stock_help') %></p>
+
+  <form method="post" action="/pro/pharmacie/stock" class="pro-form">
+    <table class="stock-edit">
+      <thead>
+        <tr>
+          <th><%= t('pro_medicament') %></th>
+          <th class="small muted"><%= t('med_dci') %></th>
+          <th class="text-center"><%= t('available') %></th>
+          <th class="text-end"><%= t('price') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% stock.forEach(s => { %>
+          <tr class="<%= s.disponible ? '' : 'is-unavail' %>">
+            <td>
+              <input type="hidden" name="medicament_id" value="<%= s.medicament_id %>">
+              <strong><%= L(s.nom_fr, s.nom_ar) %></strong>
+              <% if (s.dosage) { %><span class="muted small"> · <%= s.dosage %></span><% } %>
+              <% if (s.sur_ordonnance) { %>
+                <span class="badge badge-rx" style="margin-inline-start:6px">Rx</span>
+              <% } %>
+            </td>
+            <td class="muted small"><%= s.dci %></td>
+            <td class="text-center">
+              <label class="check" style="justify-content:center">
+                <input type="checkbox" name="dispo_<%= s.medicament_id %>" value="1"
+                       <%= s.disponible ? 'checked' : '' %>>
+              </label>
+            </td>
+            <td class="text-end">
+              <input type="number" name="prix_<%= s.medicament_id %>" min="0" step="1"
+                     value="<%= s.prix == null ? '' : s.prix %>"
+                     style="width:90px;text-align:end" placeholder="<%= t('currency') %>">
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px">
+      <button type="submit" class="btn btn-primary"><%= t('pro_save_stock') %></button>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/foot') %>

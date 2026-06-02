@@ -1,0 +1,31 @@
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand">✚ Afya <small>عافية</small></div>
+          <p class="footer-tag"><%= t('tagline') %></p>
+        </div>
+        <div class="footer-col">
+          <h4>Afya</h4>
+          <a href="/medecins"><%= t('nav_doctors') %></a>
+          <a href="/pharmacies"><%= t('nav_pharmacies') %></a>
+          <a href="/medicaments"><%= t('nav_medicaments') %></a>
+          <a href="/carte">🗺️ <%= t('nav_map') %></a>
+          <a href="/pour-les-pros">💼 <%= t('nav_pros') %></a>
+          <a href="/tarifs">💎 <%= t('nav_pricing') %></a>
+          <a href="/a-propos">ℹ️ <%= t('nav_about') %></a>
+        </div>
+        <div class="footer-col">
+          <h4><%= t('nav_contact') %></h4>
+          <a href="/contact">✉️ <%= t('contact_email_value') %></a>
+          <span class="footer-muted">📞 <%= t('contact_phone_value') %></span>
+          <span class="footer-muted">📍 <%= t('contact_address_value') %></span>
+        </div>
+      </div>
+      <p class="footer-bottom"><%= t('footer_text') %></p>
+    </div>
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<%- include('partials/head') %>
+
+<section class="container section">
+  <a href="/medicaments<%= query.q ? '?q=' + encodeURIComponent(query.q) : '' %>" class="back-link">← <%= t('back') %></a>
+
+  <div class="card med-detail">
+    <div class="card-top">
+      <% if (med.sur_ordonnance) { %><span class="badge badge-rx"><%= t('prescription_required') %></span>
+      <% } else { %><span class="badge badge-otc"><%= t('otc') %></span><% } %>
+    </div>
+    <h1><%= L(med.nom_fr, med.nom_ar) %></h1>
+    <ul class="info-list">
+      <li><strong><%= t('med_dci') %> :</strong> <%= med.dci %></li>
+      <li><strong><%= t('med_forme') %> :</strong> <%= med.forme %></li>
+      <% if (med.dosage) { %><li><strong><%= t('med_dosage') %> :</strong> <%= med.dosage %></li><% } %>
+    </ul>
+    <% if (med.description_fr) { %><p class="muted"><%= med.description_fr %></p><% } %>
+  </div>
+
+  <h2 class="section-title"><%= t('where_to_find') %></h2>
+
+  <form class="filters" action="/medicaments/<%= med.id %>" method="get">
+    <select name="wilaya" onchange="this.form.submit()">
+      <option value=""><%= t('all_wilayas') %></option>
+      <% wilayas.forEach(w => { %>
+        <option value="<%= w.nom_fr %>" <%= wilaya === w.nom_fr ? 'selected' : '' %>><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
+      <% }) %>
+    </select>
+    <noscript><button type="submit" class="btn btn-primary"><%= t('btn_search') %></button></noscript>
+  </form>
+
+  <% if (!pharmacies.length) { %>
+    <div class="empty"><%= t('no_results') %></div>
+  <% } else { %>
+    <div class="cards">
+      <% pharmacies.forEach(p => { %>
+        <div class="card pharma-card <%= p.disponible ? '' : 'is-unavail' %>">
+          <div class="card-top">
+            <% if (p.disponible) { %><span class="badge badge-open"><%= t('available') %></span>
+            <% } else { %><span class="badge badge-closed"><%= t('unavailable') %></span><% } %>
+            <% if (p.de_garde) { %><span class="badge badge-garde">🌙</span><% } %>
+          </div>
+          <h3><%= p.nom %></h3>
+          <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
+          <% if (p.disponible) { %><p class="price big"><%= p.prix %> <%= t('currency') %></p><% } %>
+          <a class="btn btn-light btn-block" href="/pharmacies/<%= p.id %>"><%= t('view_pharmacy') %> →</a>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (suggestions && suggestions.length) { %>
+    <div class="suggest-section reveal">
+      <h2 class="section-title"><%= t('suggest_medicaments') %></h2>
+      <div class="cards reveal-children">
+        <% suggestions.forEach(s => { %>
+          <a class="card med-card suggest-card" href="/medicaments/<%= s.id %>">
+            <div class="card-top">
+              <% if (s.sur_ordonnance) { %><span class="badge badge-rx"><%= t('prescription_required') %></span>
+              <% } else { %><span class="badge badge-otc"><%= t('otc') %></span><% } %>
+            </div>
+            <h3><%= L(s.nom_fr, s.nom_ar || s.nom_fr) %></h3>
+            <p class="muted"><strong><%= s.dci %></strong></p>
+            <p class="muted small"><%= s.forme %><%= s.dosage ? ' · ' + s.dosage : '' %></p>
+            <% if (s.laboratoire) { %><p class="muted small">🏷️ <%= s.laboratoire %></p><% } %>
+            <span class="link-more"><%= t('see_details') %> →</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>
