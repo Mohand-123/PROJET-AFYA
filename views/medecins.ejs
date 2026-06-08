@@ -4,6 +4,7 @@
   <h1 class="page-title">🩺 <%= t('doctors_title') %></h1>
 
   <form class="filters" action="/medecins" method="get">
+    <input type="text" name="q" value="<%= filtres.q %>" placeholder="<%= t('ph_doctor') %>" />
     <select name="specialite">
       <option value=""><%= t('all_specialites') %></option>
       <% specialites.forEach(s => { %>
@@ -16,6 +17,10 @@
         <option value="<%= w.nom_fr %>" <%= filtres.wilaya === w.nom_fr ? 'selected' : '' %>><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
       <% }) %>
     </select>
+    <button type="submit" class="btn btn-primary">🔍 <%= t('btn_search') %></button>
+    <% if (filtres.q || filtres.specialite || filtres.wilaya) { %>
+      <a class="btn-reset-link" href="/medecins">✕ <%= t('btn_reset') %></a>
+    <% } %>
   </form>
 
   <% if (specCounts && specCounts.length) { %>
@@ -23,7 +28,14 @@
       <p class="chips-label"><%= t('filter_chips_title') %></p>
       <div class="chips">
         <% specCounts.forEach(s => { %>
-          <a class="chip <%= filtres.specialite == s.id ? 'on' : '' %>" href="/medecins?specialite=<%= s.id %>">
+          <%
+            const chipParams = new URLSearchParams();
+            if (filtres.specialite != s.id) chipParams.set('specialite', s.id);
+            if (filtres.wilaya) chipParams.set('wilaya', filtres.wilaya);
+            if (filtres.q) chipParams.set('q', filtres.q);
+            const chipQs = chipParams.toString();
+          %>
+          <a class="chip <%= filtres.specialite == s.id ? 'on' : '' %>" href="/medecins<%= chipQs ? '?' + chipQs : '' %>">
             <%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %> <span class="chip-count"><%= s.n %></span>
           </a>
         <% }) %>

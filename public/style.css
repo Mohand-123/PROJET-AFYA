@@ -626,6 +626,14 @@ textarea { resize: vertical; }
 .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; align-items: center; background: var(--white); padding: 14px; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
 .filters select, .filters input[type='text'] { flex: 1; min-width: 150px; }
 .filters.compact { padding: 10px; }
+.btn-reset-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--muted); text-decoration: none;
+  padding: 8px 12px; border-radius: 8px;
+  font-size: .9rem; font-weight: 500;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.btn-reset-link:hover { background: var(--teal-soft); color: var(--teal-dark); }
 .searchbar { display: flex; gap: 10px; margin-bottom: 18px; }
 .searchbar input { flex: 1; }
 .results-count { color: var(--muted); margin-bottom: 14px; font-size: .9rem; }

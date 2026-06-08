@@ -12,6 +12,9 @@
       <option value="1"   <%= rx === '1' ? 'selected' : '' %>><%= t('prescription_required') %></option>
     </select>
     <button type="submit" class="btn btn-primary">🔍 <%= t('btn_search') %></button>
+    <% if (q || rx) { %>
+      <a class="btn-reset-link" href="/medicaments">✕ <%= t('btn_reset') %></a>
+    <% } %>
   </form>
 
   <% if (topDci && topDci.length) { %>
@@ -19,7 +22,13 @@
       <p class="chips-label"><%= t('filter_dci_chips_title') %></p>
       <div class="chips">
         <% topDci.forEach(d => { %>
-          <a class="chip <%= q === d.dci ? 'on' : '' %>" href="/medicaments?q=<%= encodeURIComponent(d.dci) %>">
+          <%
+            const chipParams = new URLSearchParams();
+            if (q !== d.dci) chipParams.set('q', d.dci);
+            if (rx) chipParams.set('rx', rx);
+            const chipQs = chipParams.toString();
+          %>
+          <a class="chip <%= q === d.dci ? 'on' : '' %>" href="/medicaments<%= chipQs ? '?' + chipQs : '' %>">
             🧬 <%= d.dci %> <span class="chip-count"><%= d.n %></span>
           </a>
         <% }) %>

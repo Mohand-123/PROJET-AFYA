@@ -385,23 +385,30 @@ app.get('/medecins', (req, res) => {
        ${where} ORDER BY m.note DESC, m.nom LIMIT ? OFFSET ?`
     )
     .all(...params, PAGE_SIZE, offset);
-  // 3 sections « propositions » pour ne jamais laisser la page vide
+  // Sections « propositions » filtrées par la spécialité courante si elle est définie
+  // → si l'user choisit Cardiologie sans wilaya, on lui montre les top cardiologues partout en Algérie
+  const sugCond = [];
+  const sugParams = [];
+  if (specialite) { sugCond.push('m.specialite_id = ?'); sugParams.push(specialite); }
+  const sugWhere = sugCond.length ? 'WHERE ' + sugCond.join(' AND ') : '';
   const populaires = db
     .prepare(
       `SELECT m.id, m.prenom, m.nom, m.sexe, m.ville, m.wilaya, m.note, m.tarif, m.accepte_cnas,
               s.nom_fr AS spec_fr, s.nom_ar AS spec_ar, s.icone AS spec_icone
        FROM medecins m JOIN specialites s ON s.id = m.specialite_id
-       ORDER BY m.note DESC, RANDOM() LIMIT 8`
+       ${sugWhere} ORDER BY m.note DESC, RANDOM() LIMIT 8`
     )
-    .all();
+    .all(...sugParams);
+  const cnasCond = sugCond.concat(['m.accepte_cnas = 1']);
+  const cnasWhere = 'WHERE ' + cnasCond.join(' AND ');
   const cnasMedecins = db
     .prepare(
       `SELECT m.id, m.prenom, m.nom, m.sexe, m.ville, m.wilaya, m.note, m.tarif, m.accepte_cnas,
               s.nom_fr AS spec_fr, s.nom_ar AS spec_ar, s.icone AS spec_icone
        FROM medecins m JOIN specialites s ON s.id = m.specialite_id
-       WHERE m.accepte_cnas = 1 ORDER BY RANDOM() LIMIT 6`
+       ${cnasWhere} ORDER BY m.note DESC, RANDOM() LIMIT 6`
     )
-    .all();
+    .all(...sugParams);
   // Compteurs par spécialité pour les chips
   const specCounts = db
     .prepare(
