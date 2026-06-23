@@ -1,165 +1,512 @@
-<%- include('partials/head') %>
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Afya · Votre santé, simplifiée</title>
+  <meta name="description" content="Afya — plateforme santé algérienne : RDV médicaux, médicaments, pharmacies de garde — 58 wilayas couvertes.">
+  <meta name="theme-color" content="#0E9C8A">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/icons/afya-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<section class="hero">
-  <span class="hero-pattern" aria-hidden="true"></span>
-  <div class="container">
-    <h1 class="hero-title"><%= t('home_hero_title') %></h1>
-    <p class="hero-sub"><%= t('home_hero_subtitle') %></p>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none}
+  @keyframes af-beat{0%,100%{transform:scale(1)}14%{transform:scale(1.18)}28%{transform:scale(1)}42%{transform:scale(1.12)}70%{transform:scale(1)}}
+  @keyframes af-floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  @keyframes af-floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}
+  @keyframes af-pulse{0%{box-shadow:0 0 0 0 rgba(33,199,178,.5)}70%{box-shadow:0 0 0 16px rgba(33,199,178,0)}100%{box-shadow:0 0 0 0 rgba(33,199,178,0)}}
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    [data-reveal]{opacity:1!important;transform:none!important}
+  }
+  /* ---- interactions ---- */
+  [data-card]{transition:transform .38s cubic-bezier(.2,.7,.3,1),box-shadow .38s ease,opacity .7s ease,border-color .3s ease!important}
+  [data-card]:hover{transform:translateY(-6px)!important;box-shadow:0 24px 52px var(--af-shadow)!important;border-color:rgba(14,156,138,.4)!important}
+  [data-btn]{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease!important}
+  [data-btn]:hover{transform:translateY(-2px)!important;filter:brightness(1.06)}
+  [data-btn]:active{transform:translateY(0)!important;filter:brightness(.98)}
+  [data-af=nav] a{transition:background .2s,color .2s}
+  [data-af=nav] a:hover{background:var(--af-surface-2)!important;color:var(--af-text)!important}
+  footer a{transition:color .2s,opacity .2s}
+  footer a:hover{color:#fff!important}
+  [data-chip]{transition:background .2s,border-color .2s,transform .15s}
+  [data-chip]:hover{background:var(--af-primary)!important;color:#fff!important;border-color:var(--af-primary)!important;transform:translateY(-1px)}
+  :focus-visible{outline:2.5px solid var(--af-primary);outline-offset:2px;border-radius:6px}
+  /* ---- responsive ---- */
+  @media (max-width:980px){
+    [data-af=hero]{grid-template-columns:1fr!important;gap:36px!important;padding:72px 22px 80px!important}
+    [data-af=hero-visual]{display:none!important}
+    [data-af=steps]{grid-template-columns:1fr!important}
+    [data-af=features]{grid-template-columns:1fr!important}
+    [data-af=garde]{grid-template-columns:1fr!important}
+    [data-af=garde] > div{padding:40px 30px!important}
+    [data-af=garde-art]{min-height:300px!important}
+    [data-af=pros]{grid-template-columns:1fr!important;gap:40px!important;padding:64px 22px!important}
+    [data-af=nav]{display:none!important}
+  }
+  @media (max-width:640px){
+    [data-af=stats]{grid-template-columns:repeat(2,1fr)!important;gap:34px 16px!important;padding:44px 22px!important}
+    [data-af=footer]{grid-template-columns:1fr 1fr!important;gap:32px 24px!important}
+    [data-hide-sm]{display:none!important}
+    [data-af=header]{padding:0 16px!important;gap:14px!important}
+    [data-af=hero] h1{font-size:38px!important}
+    [data-af=garde] > div:first-child{padding:36px 24px!important}
+  }
+</style>
 
-    <div class="search-card">
-      <div class="search-tabs">
-        <button class="tab active" data-tab="doctor">🩺 <%= t('tab_doctor') %></button>
-        <button class="tab" data-tab="med">💊 <%= t('tab_med') %></button>
-        <button class="tab" data-tab="pharma">🏥 <%= t('tab_pharma') %></button>
-      </div>
+<div id="afya-root" style="--af-bg:#F1F8F6;--af-surface:#FFFFFF;--af-surface-2:#E8F3F0;--af-text:#0E2725;--af-muted:#5C7472;--af-border:rgba(14,39,37,.09);--af-primary:#0E9C8A;--af-primary-deep:#0A6F66;--af-accent:#F5683B;--af-shadow:rgba(13,80,72,.13);--af-header:rgba(255,255,255,.82);--af-font:'Poppins',system-ui,-apple-system,sans-serif;background:var(--af-bg);color:var(--af-text);font-family:var(--af-font);min-height:100vh;transition:background .4s ease,color .4s ease;overflow-x:hidden;">
 
-      <form class="search-pane active" data-pane="doctor" action="/medecins" method="get">
-        <div class="search-input-wrap">
-          <input type="text" name="q" placeholder="<%= t('ph_doctor') %>" data-suggest="doctor" autocomplete="off" />
-        </div>
-        <select name="specialite">
-          <option value=""><%= t('all_specialites') %></option>
-          <% specialites.forEach(s => { %>
-            <option value="<%= s.id %>"><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></option>
-          <% }) %>
-        </select>
-        <select name="wilaya">
-          <option value=""><%= t('all_wilayas') %></option>
-          <% wilayas.forEach(w => { %><option value="<%= w.nom_fr %>"><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option><% }) %>
-        </select>
-        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
-      </form>
-
-      <form class="search-pane" data-pane="med" action="/medicaments" method="get">
-        <div class="search-input-wrap">
-          <input type="text" name="q" placeholder="<%= t('ph_medicament') %>" data-suggest="med" autocomplete="off" />
-        </div>
-        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
-      </form>
-
-      <form class="search-pane" data-pane="pharma" action="/pharmacies" method="get">
-        <div class="search-input-wrap">
-          <input type="text" name="q" placeholder="<%= t('search_pharma_ph') %>" data-suggest="pharma" autocomplete="off" />
-        </div>
-        <select name="wilaya">
-          <option value=""><%= t('all_wilayas') %></option>
-          <% wilayas.forEach(w => { %><option value="<%= w.nom_fr %>"><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option><% }) %>
-        </select>
-        <label class="check"><input type="checkbox" name="garde" value="1" /> <%= t('only_garde') %></label>
-        <button type="submit" class="btn btn-primary btn-search">🔍 <%= t('btn_search') %></button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<section class="container section">
-  <div class="stats-section reveal">
-    <div class="stats-grid">
-      <div class="stat">
-        <div class="stat-num" data-count="<%= stats.medecins %>">0</div>
-        <div class="stat-label"><%= t('stat_medecins') %></div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="<%= stats.pharmacies %>">0</div>
-        <div class="stat-label"><%= t('stat_pharmacies') %></div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="<%= stats.medicaments %>">0</div>
-        <div class="stat-label"><%= t('stat_medicaments') %></div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="<%= stats.wilayas %>">0</div>
-        <div class="stat-label"><%= t('stat_wilayas') %></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="container section how-section">
-  <h2 class="section-title"><%= t('how_title') %></h2>
-  <p class="lead"><%= t('how_subtitle') %></p>
-  <div class="how-steps reveal-children">
-    <div class="how-step">
-      <div class="how-illu">
-        <span class="how-pulse"></span>
-        <span class="how-ico">🔍</span>
-      </div>
-      <div class="how-num">1</div>
-      <h3><%= t('how_step1_title') %></h3>
-      <p><%= t('how_step1_desc') %></p>
-    </div>
-    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
-    <div class="how-step">
-      <div class="how-illu">
-        <span class="how-pulse"></span>
-        <span class="how-ico">📅</span>
-      </div>
-      <div class="how-num">2</div>
-      <h3><%= t('how_step2_title') %></h3>
-      <p><%= t('how_step2_desc') %></p>
-    </div>
-    <div class="how-connector"><span class="how-dot"></span><span class="how-dot"></span><span class="how-dot"></span></div>
-    <div class="how-step">
-      <div class="how-illu">
-        <span class="how-pulse"></span>
-        <span class="how-ico">✅</span>
-      </div>
-      <div class="how-num">3</div>
-      <h3><%= t('how_step3_title') %></h3>
-      <p><%= t('how_step3_desc') %></p>
-    </div>
-  </div>
-
-  <div class="heartbeat-banner reveal">
-    <div class="heartbeat-row">
-      <svg class="heartbeat-svg" viewBox="0 0 600 80" preserveAspectRatio="none">
-        <path d="M0 40 L 100 40 L 130 40 L 145 20 L 160 60 L 175 10 L 190 70 L 205 40 L 240 40 L 270 40 L 285 25 L 300 55 L 315 15 L 330 65 L 345 40 L 600 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="heartbeat-content">
-      <span class="heartbeat-icon">❤️</span>
-      <div>
-        <strong><%= t('heartbeat_title') %></strong>
-        <p><%= t('heartbeat_desc') %></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="container section">
-  <div class="features reveal">
-    <div class="feature"><span class="feature-ico">📅</span><h3><%= t('feature1_title') %></h3><p><%= t('feature1_desc') %></p></div>
-    <div class="feature"><span class="feature-ico">💊</span><h3><%= t('feature2_title') %></h3><p><%= t('feature2_desc') %></p></div>
-    <div class="feature"><span class="feature-ico">🌙</span><h3><%= t('feature3_title') %></h3><p><%= t('feature3_desc') %></p></div>
-  </div>
-</section>
-
-<section class="container section">
-  <h2 class="section-title"><%= t('home_popular_spec') %></h2>
-  <div class="chips reveal">
-    <% specialites.forEach(s => { %>
-      <a class="chip" href="/medecins?specialite=<%= s.id %>"><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></a>
-    <% }) %>
-  </div>
-</section>
-
-<% if (pharmaGarde.length) { %>
-<section class="container section">
-  <h2 class="section-title">🌙 <%= t('home_garde_title') %></h2>
-  <div class="cards reveal-children">
-    <% pharmaGarde.forEach(p => { %>
-      <a class="card pharma-card" href="/pharmacies/<%= p.id %>">
-        <div class="card-top">
-          <span class="badge badge-garde"><%= t('pharmacy_de_garde') %></span>
-          <span class="badge badge-open"><%= t('open_now') %></span>
-        </div>
-        <h3><%= p.nom %></h3>
-        <p class="muted">📍 <%= p.ville %>, <%= p.wilaya %></p>
-        <p class="muted">📞 <%= p.telephone %></p>
+  <!-- ============ HEADER ============ -->
+  <header style="position:sticky;top:0;z-index:50;background:var(--af-header);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--af-border);">
+    <div data-af="header" style="max-width:1200px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:32px;">
+      <a href="/" style="display:flex;align-items:center;gap:11px;font-weight:800;font-size:22px;letter-spacing:-.02em;">
+        <span style="width:38px;height:38px;border-radius:12px;background:linear-gradient(140deg,#0E9C8A,#16B79E);color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 6px 16px rgba(14,156,138,.4);animation:af-beat 2.6s ease-in-out infinite;">✚</span>
+        <span>Afya<span style="color:var(--af-primary);"> ·</span> <span style="font-family:'Cairo',sans-serif;font-weight:700;color:var(--af-primary);">عافية</span></span>
       </a>
-    <% }) %>
-  </div>
-</section>
-<% } %>
+      <nav data-af="nav" style="display:flex;align-items:center;gap:6px;margin-inline-start:8px;font-size:15px;font-weight:500;">
+        <a href="/medecins" style="padding:9px 13px;border-radius:9px;color:var(--af-muted);" data-ar="الأطباء">Médecins</a>
+        <a href="/pharmacies" style="padding:9px 13px;border-radius:9px;color:var(--af-muted);" data-ar="الصيدليات">Pharmacies</a>
+        <a href="/medicaments" style="padding:9px 13px;border-radius:9px;color:var(--af-muted);" data-ar="الأدوية">Médicaments</a>
+        <a href="/carte" style="padding:9px 13px;border-radius:9px;color:var(--af-muted);" data-ar="الخريطة">Carte</a>
+        <a href="/tarifs" style="padding:9px 13px;border-radius:9px;color:var(--af-muted);" data-ar="الأسعار">Tarifs</a>
+      </nav>
+      <div style="margin-inline-start:auto;display:flex;align-items:center;gap:10px;">
+        <button onclick="window.afya.toggleLang()" title="Langue" style="display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:10px;background:var(--af-surface-2);color:var(--af-text);font-weight:700;font-size:14px;">🌐 <span id="af-langlabel">AR</span></button>
+        <button onclick="window.afya.toggleDark()" title="Thème" style="width:40px;height:40px;border-radius:10px;background:var(--af-surface-2);font-size:17px;display:flex;align-items:center;justify-content:center;"><span id="af-darkicon">🌙</span></button>
+        <a href="/connexion" data-hide-sm="" style="height:40px;display:flex;align-items:center;padding:0 16px;border-radius:10px;border:1.5px solid var(--af-border);color:var(--af-text);font-weight:600;font-size:14px;" data-ar="تسجيل الدخول">Se connecter</a>
+        <a href="/inscription" data-btn="" style="height:40px;display:flex;align-items:center;padding:0 18px;border-radius:10px;background:var(--af-primary);color:#fff;font-weight:700;font-size:14px;box-shadow:0 8px 20px var(--af-shadow);" data-ar="إنشاء حساب">S'inscrire</a>
+      </div>
+    </div>
+  </header>
 
-<%- include('partials/foot') %>
+  <!-- ============ HERO ============ -->
+  <section style="position:relative;background:linear-gradient(143deg,#0A6F66 0%,#0E9C8A 46%,#16B79E 100%);color:#fff;overflow:hidden;">
+    <div style="position:absolute;top:-160px;inset-inline-end:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 65%);"></div>
+    <div style="position:absolute;bottom:-200px;inset-inline-start:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(8,60,55,.5),transparent 62%);"></div>
+    <div style="max-width:1200px;margin:0 auto;padding:108px 24px 112px;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2;" data-af="hero">
+
+      <div>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border-radius:999px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);font-size:14px;font-weight:600;">🇩🇿 <span data-ar="متوفر في 58 ولاية">Présent dans les 58 wilayas</span></span>
+        <h1 style="font-size:clamp(40px,5vw,62px);font-weight:800;line-height:1.04;letter-spacing:-.025em;margin:20px 0 16px;" data-ar="صحتك، ببساطة.">Votre santé,<br>simplifiée.</h1>
+        <p style="font-size:19px;line-height:1.62;color:rgba(255,255,255,.92);max-width:500px;margin:0 0 32px;" data-ar="احجز موعدك، اعثر على أدويتك وحدّد أقرب صيدلية حراسة — في ثوانٍ معدودة.">Prenez rendez-vous, trouvez vos médicaments et localisez la pharmacie de garde la plus proche — en quelques secondes.</p>
+
+        <!-- Search card -->
+        <div style="background:var(--af-surface);border-radius:20px;padding:14px;box-shadow:0 28px 64px rgba(5,46,42,.4);color:var(--af-text);max-width:540px;">
+          <div style="display:flex;gap:6px;margin-bottom:12px;">
+            <button data-tab="medecin" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:var(--af-primary);color:#fff;box-shadow:0 6px 16px var(--af-shadow);transition:all .2s;"><span data-ar="طبيب">🩺 Médecin</span></button>
+            <button data-tab="pharmacie" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="صيدلية">💊 Pharmacie</span></button>
+            <button data-tab="medicament" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="دواء">🔍 Médicament</span></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:var(--af-surface-2);border-radius:12px;padding:6px;padding-inline-start:16px;">
+            <span style="font-size:18px;opacity:.6;">🔎</span>
+            <input id="af-search" data-fr-ph="Spécialité, nom du médecin, ville…" data-ar-ph="التخصص، اسم الطبيب، المدينة…" placeholder="Spécialité, nom du médecin, ville…" style="flex:1;border:none;background:transparent;outline:none;font-size:16px;color:var(--af-text);font-family:inherit;min-width:0;">
+            <button data-btn="" style="background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;white-space:nowrap;" data-ar="بحث">Rechercher</button>
+          </div>
+          <div id="af-chips" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding:2px 4px;"></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:9px;margin-top:22px;font-size:14px;color:rgba(255,255,255,.88);">
+          <span style="font-size:16px;">✅</span><span data-ar="بيانات رسمية حقيقية — 58 ولاية، دون تسجيل للبحث.">Données réelles et officielles — 58 wilayas, sans inscription pour rechercher.</span>
+        </div>
+      </div>
+
+      <!-- Hero visual -->
+      <div data-af="hero-visual" style="position:relative;height:440px;">
+        <div style="position:absolute;inset-inline-end:0;top:10px;width:340px;background:var(--af-surface);color:var(--af-text);border-radius:24px;padding:22px;box-shadow:0 30px 70px rgba(5,46,42,.45);">
+          <div style="display:flex;align-items:center;gap:13px;">
+            <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(140deg,#0E9C8A,#16B79E);display:flex;align-items:center;justify-content:center;font-size:26px;">🩺</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:16px;">Dr. Amine Belkacem</div>
+              <div style="font-size:13px;color:var(--af-muted);" data-ar="طبيب قلب · متعاقد مع CNAS">Cardiologue · Conventionné CNAS</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:var(--af-primary);">★ 4.9</div>
+          </div>
+          <div style="margin:18px 0 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--af-muted);" data-ar="مواعيد اليوم">Créneaux · Aujourd'hui</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:9px 13px;border-radius:9px;background:var(--af-surface-2);font-size:13px;font-weight:600;">09:00</span>
+            <span style="padding:9px 13px;border-radius:9px;background:var(--af-primary);color:#fff;font-size:13px;font-weight:700;box-shadow:0 6px 14px var(--af-shadow);">09:30</span>
+            <span style="padding:9px 13px;border-radius:9px;background:var(--af-surface-2);font-size:13px;font-weight:600;">10:00</span>
+            <span style="padding:9px 13px;border-radius:9px;background:var(--af-surface-2);font-size:13px;font-weight:600;">11:30</span>
+          </div>
+          <button data-btn="" style="width:100%;margin-top:16px;background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;" data-ar="تأكيد الموعد">Confirmer le rendez-vous</button>
+        </div>
+
+        <div style="position:absolute;inset-inline-start:0;top:78px;background:var(--af-surface);color:var(--af-text);border-radius:15px;padding:12px 16px;box-shadow:0 18px 44px rgba(5,46,42,.3);font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;animation:af-floatA 5s ease-in-out infinite;">
+          <span style="width:30px;height:30px;border-radius:9px;background:#E6F7F2;display:flex;align-items:center;justify-content:center;">✅</span><span data-ar="تم تأكيد الموعد">RDV confirmé</span>
+        </div>
+        <div style="position:absolute;inset-inline-start:18px;bottom:8px;background:var(--af-surface);color:var(--af-text);border-radius:15px;padding:12px 16px;box-shadow:0 18px 44px rgba(5,46,42,.3);font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;animation:af-floatB 6s ease-in-out infinite;">
+          <span style="width:30px;height:30px;border-radius:9px;background:#FFF0E9;display:flex;align-items:center;justify-content:center;">🌙</span><span data-ar="صيدلية حراسة · 1.2 كم">Pharmacie de garde · 1,2 km</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section style="background:var(--af-surface);border-bottom:1px solid var(--af-border);">
+    <div style="max-width:1100px;margin:0 auto;padding:54px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;" data-af="stats">
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;">
+        <div data-count="<%= stats.pharmacies %>" style="font-size:44px;font-weight:800;color:var(--af-primary);letter-spacing:-.02em;line-height:1;"><%= stats.pharmacies.toLocaleString('fr-FR').replace(/\u00A0/g, '\u202F') %></div>
+        <div style="margin-top:8px;font-size:15px;color:var(--af-muted);font-weight:500;" data-ar="صيدلية مرجعية">Pharmacies référencées</div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .08s,transform .7s ease .08s;">
+        <div data-count="<%= stats.medicaments %>" style="font-size:44px;font-weight:800;color:var(--af-primary);letter-spacing:-.02em;line-height:1;"><%= stats.medicaments.toLocaleString('fr-FR').replace(/\u00A0/g, '\u202F') %></div>
+        <div style="margin-top:8px;font-size:15px;color:var(--af-muted);font-weight:500;" data-ar="دواء (تسمية MIPH)">Médicaments · MIPH</div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .16s,transform .7s ease .16s;">
+        <div data-count="<%= stats.medecins %>" style="font-size:44px;font-weight:800;color:var(--af-primary);letter-spacing:-.02em;line-height:1;"><%= stats.medecins.toLocaleString('fr-FR').replace(/\u00A0/g, '\u202F') %></div>
+        <div style="margin-top:8px;font-size:15px;color:var(--af-muted);font-weight:500;" data-ar="طبيب">Médecins</div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .24s,transform .7s ease .24s;">
+        <div data-count="<%= stats.wilayas %>" style="font-size:44px;font-weight:800;color:var(--af-primary);letter-spacing:-.02em;line-height:1;"><%= stats.wilayas %></div>
+        <div style="margin-top:8px;font-size:15px;color:var(--af-muted);font-weight:500;" data-ar="ولاية مغطاة">Wilayas couvertes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMENT ÇA MARCHE ============ -->
+  <section style="max-width:1200px;margin:0 auto;padding:96px 24px 40px;">
+    <div style="text-align:center;max-width:640px;margin:0 auto 56px;">
+      <div style="font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--af-primary);" data-ar="بكل بساطة">En toute simplicité</div>
+      <h2 style="font-size:clamp(30px,3.6vw,42px);font-weight:800;letter-spacing:-.02em;margin:12px 0;" data-ar="كيف تعمل؟">Comment ça marche ?</h2>
+      <p style="font-size:17px;color:var(--af-muted);line-height:1.6;margin:0;" data-ar="ثلاث خطوات بين سؤالك الصحي والعناية بك.">Trois étapes entre votre question santé et votre prise en charge.</p>
+    </div>
+    <div data-af="steps" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;background:var(--af-surface);border:1px solid var(--af-border);border-radius:20px;padding:30px;">
+        <div style="width:46px;height:46px;border-radius:13px;background:var(--af-surface-2);color:var(--af-primary);font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;">1</div>
+        <h3 style="font-size:21px;font-weight:700;margin:18px 0 8px;" data-ar="ابحث">Recherchez</h3>
+        <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="اعثر على طبيب أو صيدلية أو دواء بكتابة بضعة أحرف.">Trouvez un médecin, une pharmacie ou un médicament en tapant quelques lettres.</p>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .1s,transform .7s ease .1s;background:var(--af-surface);border:1px solid var(--af-border);border-radius:20px;padding:30px;">
+        <div style="width:46px;height:46px;border-radius:13px;background:var(--af-surface-2);color:var(--af-primary);font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;">2</div>
+        <h3 style="font-size:21px;font-weight:700;margin:18px 0 8px;" data-ar="احجز">Réservez</h3>
+        <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="اختر موعداً متاحاً على مدى 14 يوماً، مؤكَّداً في الوقت الفعلي.">Choisissez un créneau libre sur 14 jours, confirmé en temps réel.</p>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .2s,transform .7s ease .2s;background:var(--af-surface);border:1px solid var(--af-border);border-radius:20px;padding:30px;">
+        <div style="width:46px;height:46px;border-radius:13px;background:var(--af-surface-2);color:var(--af-primary);font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center;">3</div>
+        <h3 style="font-size:21px;font-weight:700;margin:18px 0 8px;" data-ar="اعتنِ بصحتك">Soignez-vous</h3>
+        <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="تلقَّ إشعاراتك واعثر على كل مواعيدك في «حسابي».">Recevez vos notifications et retrouvez tous vos RDV dans Mon compte.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section style="max-width:1200px;margin:0 auto;padding:64px 24px 40px;">
+    <div data-af="features" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;">
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;background:var(--af-surface);border:1px solid var(--af-border);border-radius:22px;padding:32px;display:flex;gap:20px;">
+        <div style="flex:none;width:58px;height:58px;border-radius:16px;background:linear-gradient(140deg,#0E9C8A,#16B79E);display:flex;align-items:center;justify-content:center;font-size:27px;">🩺</div>
+        <div>
+          <h3 style="font-size:20px;font-weight:700;margin:2px 0 8px;" data-ar="مواعيد عبر الإنترنت 24/7">Rendez-vous en ligne 24/7</h3>
+          <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="احجز مع طبيب متعاقد مع CNAS، وأدِر مواعيدك أو ألغِها بنقرة واحدة.">Réservez avec un médecin conventionné CNAS, gérez et annulez en un clic.</p>
+        </div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .08s,transform .7s ease .08s;background:var(--af-surface);border:1px solid var(--af-border);border-radius:22px;padding:32px;display:flex;gap:20px;">
+        <div style="flex:none;width:58px;height:58px;border-radius:16px;background:linear-gradient(140deg,#0E9C8A,#16B79E);display:flex;align-items:center;justify-content:center;font-size:27px;">💊</div>
+        <div>
+          <h3 style="font-size:20px;font-weight:700;margin:2px 0 8px;" data-ar="توفّر الأدوية">Disponibilité des médicaments</h3>
+          <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="تحقّق من المخزون الفعلي في الصيدليات قبل أن تتنقّل.">Vérifiez le stock réel dans les pharmacies avant de vous déplacer.</p>
+        </div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .12s,transform .7s ease .12s;background:var(--af-surface);border:1px solid var(--af-border);border-radius:22px;padding:32px;display:flex;gap:20px;">
+        <div style="flex:none;width:58px;height:58px;border-radius:16px;background:linear-gradient(140deg,#F5683B,#FF8A5C);display:flex;align-items:center;justify-content:center;font-size:27px;">🌙</div>
+        <div>
+          <h3 style="font-size:20px;font-weight:700;margin:2px 0 8px;" data-ar="صيدليات الحراسة">Pharmacies de garde</h3>
+          <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="اعرف فوراً أيّ صيدلية مفتوحة ليلاً وفي عطلة نهاية الأسبوع.">Sachez immédiatement quelle pharmacie est ouverte la nuit et le week-end.</p>
+        </div>
+      </div>
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease .16s,transform .7s ease .16s;background:var(--af-surface);border:1px solid var(--af-border);border-radius:22px;padding:32px;display:flex;gap:20px;">
+        <div style="flex:none;width:58px;height:58px;border-radius:16px;background:linear-gradient(140deg,#0E9C8A,#16B79E);display:flex;align-items:center;justify-content:center;font-size:27px;">🗺️</div>
+        <div>
+          <h3 style="font-size:20px;font-weight:700;margin:2px 0 8px;" data-ar="خريطة تفاعلية">Carte interactive</h3>
+          <p style="font-size:15px;line-height:1.6;color:var(--af-muted);margin:0;" data-ar="2391 صيدلية محدّدة جغرافياً، قابلة للتصفية حسب الحراسة والفتح."><%= stats.pharmacies.toLocaleString('fr-FR') %> pharmacies géolocalisées, filtrables par garde et ouverture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GARDE SPOTLIGHT ============ -->
+  <section style="max-width:1200px;margin:0 auto;padding:64px 24px;">
+    <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;background:linear-gradient(140deg,#0A6F66,#0E9C8A);border-radius:28px;padding:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;color:#fff;" data-af="garde">
+      <div style="padding:56px;">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.16);font-size:13px;font-weight:600;">🌙 <span data-ar="في الوقت الفعلي">En temps réel</span></span>
+        <h2 style="font-size:clamp(28px,3.2vw,38px);font-weight:800;letter-spacing:-.02em;margin:18px 0 14px;line-height:1.1;" data-ar="صيدلية الحراسة، في الوقت الفعلي">La pharmacie de garde, en temps réel</h2>
+        <p style="font-size:17px;line-height:1.62;color:rgba(255,255,255,.9);margin:0 0 28px;max-width:430px;" data-ar="لا داعي للركض من صيدلية إلى أخرى. يعرض Afya مباشرةً صيدليات الحراسة القريبة منك، مع الساعات والمسار.">Plus besoin de courir d'une pharmacie à l'autre. Afya affiche en direct les pharmacies de garde près de vous, avec horaires et itinéraire.</p>
+        <a href="/carte" data-btn="" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--af-primary-deep);font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px;" data-ar="افتح الخريطة">Ouvrir la carte →</a>
+      </div>
+      <div data-af="garde-art" style="position:relative;background:linear-gradient(160deg,#0C5F58,#0A4F49);min-height:340px;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:26px 26px;">
+        <div style="position:absolute;top:28%;inset-inline-start:30%;width:14px;height:14px;border-radius:50%;background:#FF8A5C;box-shadow:0 0 0 6px rgba(245,104,59,.25);"></div>
+        <div style="position:absolute;top:54%;inset-inline-start:58%;width:14px;height:14px;border-radius:50%;background:#FF8A5C;box-shadow:0 0 0 6px rgba(245,104,59,.25);"></div>
+        <div style="position:absolute;top:38%;inset-inline-start:68%;width:11px;height:11px;border-radius:50%;background:#7FE3D2;"></div>
+        <div style="position:absolute;top:66%;inset-inline-start:24%;width:11px;height:11px;border-radius:50%;background:#7FE3D2;"></div>
+        <div style="position:absolute;top:42%;inset-inline-start:46%;width:52px;height:52px;border-radius:50%;background:#16B79E;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:af-pulse 2.4s infinite;">24</div>
+        <div style="position:absolute;bottom:22px;inset-inline-start:22px;inset-inline-end:22px;background:rgba(255,255,255,.95);color:var(--af-text);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 16px 40px rgba(0,0,0,.3);">
+          <span style="width:38px;height:38px;border-radius:11px;background:#FFF0E9;display:flex;align-items:center;justify-content:center;font-size:18px;">💊</span>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:14px;">Pharmacie El Chifa</div>
+            <div style="font-size:12px;color:var(--af-primary);font-weight:600;" data-ar="حراسة · مفتوحة الآن · 0.8 كم">De garde · Ouverte · 0,8 km</div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:#fff;background:#1F8A5B;padding:5px 10px;border-radius:999px;" data-ar="مفتوح">Ouvert</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ POUR LES PROS ============ -->
+  <section style="background:var(--af-surface-2);border-top:1px solid var(--af-border);border-bottom:1px solid var(--af-border);">
+    <div style="max-width:1200px;margin:0 auto;padding:88px 24px;display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;align-items:center;" data-af="pros">
+      <div data-reveal="" style="opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;position:relative;">
+        <div style="background:var(--af-surface);border:1px solid var(--af-border);border-radius:22px;padding:24px;box-shadow:0 24px 60px var(--af-shadow);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div style="font-weight:700;font-size:16px;" data-ar="لوحة التحكم">Tableau de bord</div>
+            <span style="font-size:12px;font-weight:700;color:#1F8A5B;background:rgba(31,138,91,.12);padding:5px 11px;border-radius:999px;" data-ar="حراسة مفعّلة">Mode garde actif</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div style="background:var(--af-surface-2);border-radius:13px;padding:15px;"><div style="font-size:26px;font-weight:800;color:var(--af-primary);">12</div><div style="font-size:12px;color:var(--af-muted);" data-ar="مواعيد اليوم">RDV aujourd'hui</div></div>
+            <div style="background:var(--af-surface-2);border-radius:13px;padding:15px;"><div style="font-size:26px;font-weight:800;color:var(--af-primary);">4 627</div><div style="font-size:12px;color:var(--af-muted);" data-ar="مراجع في المخزون">Réf. en stock</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;align-items:center;gap:11px;background:var(--af-surface-2);border-radius:11px;padding:11px 13px;"><span style="width:30px;height:30px;border-radius:8px;background:#E6F7F2;display:flex;align-items:center;justify-content:center;">🕘</span><span style="font-size:13px;font-weight:500;" data-ar="08:00 – 19:00 · من الإثنين إلى السبت">08:00 – 19:00 · Lun. au Sam.</span></div>
+            <div style="display:flex;align-items:center;gap:11px;background:var(--af-surface-2);border-radius:11px;padding:11px 13px;"><span style="width:30px;height:30px;border-radius:8px;background:#E6F7F2;display:flex;align-items:center;justify-content:center;">💳</span><span style="font-size:13px;font-weight:500;" data-ar="متعاقد CNAS · الدفع الإلكتروني">Conventionné CNAS · Paiement en ligne</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--af-primary);" data-ar="للمحترفين">Pour les pros</div>
+        <h2 style="font-size:clamp(28px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:12px 0 14px;line-height:1.1;" data-ar="هل أنت طبيب أو صيدلي؟">Vous êtes médecin ou pharmacien ?</h2>
+        <p style="font-size:17px;line-height:1.62;color:var(--af-muted);margin:0 0 24px;max-width:460px;" data-ar="أدِر أجندتك وساعاتك ومخزونك. اكسب ظهوراً لدى ملايين المرضى.">Gérez votre agenda, vos horaires et votre stock. Gagnez en visibilité auprès de millions de patients.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;max-width:480px;">
+          <div style="display:flex;align-items:center;gap:9px;font-size:15px;font-weight:500;"><span style="color:var(--af-primary);font-weight:800;">✓</span><span data-ar="أجندة ومواعيد عبر الإنترنت">Agenda et créneaux en ligne</span></div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:15px;font-weight:500;"><span style="color:var(--af-primary);font-weight:800;">✓</span><span data-ar="إدارة المخزون">Gestion du stock</span></div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:15px;font-weight:500;"><span style="color:var(--af-primary);font-weight:800;">✓</span><span data-ar="وضع الحراسة والساعات">Mode garde et horaires</span></div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:15px;font-weight:500;"><span style="color:var(--af-primary);font-weight:800;">✓</span><span data-ar="ملف تعاقد CNAS">Profil CNAS</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <a href="/pour-les-pros" data-btn="" style="background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:15px 26px;border-radius:12px;box-shadow:0 12px 28px var(--af-shadow);" data-ar="اكتشف العروض">Découvrir les offres →</a>
+          <span style="font-size:14px;color:var(--af-muted);" data-ar="مجاني · Standard 2 990 دج · Premium 6 990 دج">Gratuit · Standard 2 990 DA · Premium 6 990 DA</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:var(--af-primary-deep);color:rgba(255,255,255,.82);">
+    <div style="max-width:1200px;margin:0 auto;padding:64px 24px 28px;">
+      <div data-af="footer" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:11px;font-weight:800;font-size:22px;color:#fff;">
+            <span style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:21px;">✚</span>
+            Afya · <span style="font-family:'Cairo',sans-serif;">عافية</span>
+          </div>
+          <p style="margin:16px 0 10px;font-size:14px;line-height:1.6;max-width:300px;" data-ar="منصة صحية ثنائية اللغة للجزائر — مواعيد، أدوية وصيدليات حراسة في مكان واحد.">Plateforme santé bilingue pour l'Algérie — rendez-vous, médicaments et pharmacies de garde réunis en un seul endroit.</p>
+          <p style="font-family:'Cairo',sans-serif;font-size:14px;color:#9FE0D3;direction:rtl;margin:0;">« الصحة تاج فوق رؤوس الأصحاء »</p>
+        </div>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:14px;" data-ar="المنتج">Produit</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+            <a href="/medecins" data-ar="الأطباء">Médecins</a><a href="/pharmacies" data-ar="الصيدليات">Pharmacies</a><a href="/medicaments" data-ar="الأدوية">Médicaments</a><a href="/carte" data-ar="الخريطة">Carte</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:14px;" data-ar="للمحترفين">Professionnels</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+            <a href="/connexion" data-ar="مساحة الطبيب">Espace médecin</a><a href="/connexion" data-ar="مساحة الصيدلية">Espace pharmacie</a><a href="/tarifs" data-ar="الأسعار">Tarifs</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:14px;" data-ar="الموارد">Ressources</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+            <a href="/a-propos" data-ar="من نحن">À propos</a><a href="/contact" data-ar="اتصل بنا">Contact</a><a href="/confidentialite">Confidentialité</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.14);margin-top:44px;padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;">
+        <span data-ar="صُمّم وطُوّر في الجزائر 🇩🇿 بكل ❤️">Conçu et développé en Algérie 🇩🇿 avec ❤️</span>
+        <span>© 2026 Afya · Licence MIT</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var Afya = {
+    lang: 'fr',
+    dark: false,
+    tab: 'medecin',
+    init: function () {
+      this.root = document.getElementById('afya-root');
+      if (!this.root) return;
+      this.searchInput = this.root.querySelector('#af-search');
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Tag content cards with a heading for hover lift
+      this.root.querySelectorAll('[data-reveal]').forEach(function (el) {
+        if (el.querySelector('h3')) el.setAttribute('data-card', '');
+      });
+
+      this.renderChips();
+      this.wireSearch();
+
+      // Scroll-reveal
+      if (!reduce && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'translateY(0)';
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        this.root.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+      } else {
+        this.root.querySelectorAll('[data-reveal]').forEach(function (el) {
+          el.style.opacity = '1'; el.style.transform = 'none';
+        });
+      }
+
+      // Count-up animation on stats
+      var that = this;
+      var counters = this.root.querySelectorAll('[data-count]');
+      if (!reduce && 'IntersectionObserver' in window) {
+        counters.forEach(function (el) { el.textContent = '0'; });
+        var sio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { that.countUp(e.target); sio.unobserve(e.target); }
+          });
+        }, { threshold: 0.5 });
+        counters.forEach(function (el) { sio.observe(el); });
+      }
+    },
+    fmt: function (n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F'); },
+    countUp: function (el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var dur = 1400, start = performance.now();
+      var ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+      var that = this;
+      var tick = function (now) {
+        var t = Math.min(1, (now - start) / dur);
+        el.textContent = that.fmt(Math.round(ease(t) * target));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    },
+    applyPlaceholder: function () {
+      if (!this.searchInput) return;
+      var ph = {
+        fr: { medecin: 'Spécialité, nom du médecin, ville…', pharmacie: 'Nom de la pharmacie, ville…', medicament: 'Nom du médicament, DCI…' },
+        ar: { medecin: 'التخصص، اسم الطبيب، المدينة…', pharmacie: 'اسم الصيدلية، المدينة…', medicament: 'اسم الدواء، DCI…' }
+      };
+      this.searchInput.placeholder = ph[this.lang][this.tab];
+    },
+    renderChips: function () {
+      var wrap = this.root && this.root.querySelector('#af-chips');
+      if (!wrap) return;
+      var data = {
+        fr: {
+          medecin: ['Cardiologue', 'Dentiste', 'Pédiatre', 'Généraliste'],
+          pharmacie: ['De garde', 'Ouverte maintenant', 'Alger Centre', 'Oran'],
+          medicament: ['Doliprane', 'Amoxicilline', 'Insuline', 'Ventoline']
+        },
+        ar: {
+          medecin: ['طبيب قلب', 'طبيب أسنان', 'طبيب أطفال', 'طبيب عام'],
+          pharmacie: ['حراسة', 'مفتوحة الآن', 'الجزائر الوسطى', 'وهران'],
+          medicament: ['دوليبران', 'أموكسيسيلين', 'إنسولين', 'فنتولين']
+        }
+      };
+      var label = this.lang === 'ar' ? 'بحث شائع:' : 'Fréquent\u00A0:';
+      var chips = data[this.lang][this.tab];
+      var that = this;
+      wrap.innerHTML = '';
+      var lbl = document.createElement('span');
+      lbl.textContent = label;
+      lbl.style.cssText = 'font-size:12.5px;color:var(--af-muted);font-weight:600;align-self:center;';
+      wrap.appendChild(lbl);
+      chips.forEach(function (txt) {
+        var c = document.createElement('button');
+        c.type = 'button';
+        c.setAttribute('data-chip', '');
+        c.textContent = txt;
+        c.style.cssText = 'font-size:12.5px;font-weight:600;color:var(--af-primary-deep);background:var(--af-surface-2);border:1px solid var(--af-border);padding:6px 12px;border-radius:999px;cursor:pointer;';
+        c.addEventListener('click', function () {
+          if (that.searchInput) { that.searchInput.value = txt; that.searchInput.focus(); }
+        });
+        wrap.appendChild(c);
+      });
+    },
+    setTab: function (btn) {
+      var tab = btn.getAttribute('data-tab');
+      this.tab = tab;
+      this.root.querySelectorAll('[data-tab]').forEach(function (b) {
+        var on = b.getAttribute('data-tab') === tab;
+        b.style.background = on ? 'var(--af-primary)' : 'transparent';
+        b.style.color = on ? '#fff' : 'var(--af-muted)';
+        b.style.boxShadow = on ? '0 6px 16px var(--af-shadow)' : 'none';
+      });
+      this.applyPlaceholder();
+      this.renderChips();
+    },
+    wireSearch: function () {
+      var that = this;
+      var btn = this.root.querySelector('button[data-btn][data-ar="بحث"]');
+      var input = this.searchInput;
+      if (!input || !btn) return;
+      var go = function () {
+        var routeByTab = { medecin: '/medecins', pharmacie: '/pharmacies', medicament: '/medicaments' };
+        var route = routeByTab[that.tab] || '/medecins';
+        var q = (input.value || '').trim();
+        window.location.href = route + (q ? ('?q=' + encodeURIComponent(q)) : '');
+      };
+      btn.addEventListener('click', function (e) { e.preventDefault(); go(); });
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    },
+    toggleLang: function () {
+      this.lang = this.lang === 'fr' ? 'ar' : 'fr';
+      var ar = this.lang === 'ar';
+      this.root.querySelectorAll('[data-ar]').forEach(function (el) {
+        if (ar) { if (el._fr == null) el._fr = el.textContent; el.textContent = el.getAttribute('data-ar'); }
+        else if (el._fr != null) el.textContent = el._fr;
+      });
+      this.root.style.direction = ar ? 'rtl' : 'ltr';
+      this.root.style.setProperty('--af-font', ar ? "'Cairo','Poppins',system-ui,sans-serif" : "'Poppins',system-ui,-apple-system,sans-serif");
+      var lb = this.root.querySelector('#af-langlabel');
+      if (lb) lb.textContent = ar ? 'FR' : 'AR';
+      this.applyPlaceholder();
+      this.renderChips();
+    },
+    toggleDark: function () {
+      this.dark = !this.dark;
+      var s = this.root.style;
+      if (this.dark) {
+        s.setProperty('--af-bg', '#0A1413'); s.setProperty('--af-surface', '#0F211E'); s.setProperty('--af-surface-2', '#16332E');
+        s.setProperty('--af-text', '#EAF4F2'); s.setProperty('--af-muted', '#9FB8B4'); s.setProperty('--af-border', 'rgba(255,255,255,.10)');
+        s.setProperty('--af-primary', '#21C7B2'); s.setProperty('--af-primary-deep', '#072B27'); s.setProperty('--af-shadow', 'rgba(0,0,0,.45)');
+        s.setProperty('--af-header', 'rgba(10,20,19,.8)');
+      } else {
+        s.setProperty('--af-bg', '#F1F8F6'); s.setProperty('--af-surface', '#FFFFFF'); s.setProperty('--af-surface-2', '#E8F3F0');
+        s.setProperty('--af-text', '#0E2725'); s.setProperty('--af-muted', '#5C7472'); s.setProperty('--af-border', 'rgba(14,39,37,.09)');
+        s.setProperty('--af-primary', '#0E9C8A'); s.setProperty('--af-primary-deep', '#0A6F66'); s.setProperty('--af-shadow', 'rgba(13,80,72,.13)');
+        s.setProperty('--af-header', 'rgba(255,255,255,.82)');
+      }
+      var di = this.root.querySelector('#af-darkicon');
+      if (di) di.textContent = this.dark ? '☀️' : '🌙';
+    }
+  };
+  window.afya = Afya;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { Afya.init(); });
+  else Afya.init();
+})();
+</script>
+</body>
+</html>

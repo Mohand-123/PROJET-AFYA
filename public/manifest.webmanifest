@@ -2,7 +2,7 @@
   "name": "Afya — Votre santé, simplifiée",
   "short_name": "Afya",
   "id": "/?source=pwa",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Plateforme santé algérienne : RDV médicaux, pharmacies et médicaments — 58 wilayas couvertes.",
   "start_url": "/?source=pwa",
   "scope": "/",
