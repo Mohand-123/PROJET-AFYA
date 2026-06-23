@@ -635,6 +635,33 @@
   window.afya = Afya;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { Afya.init(); });
   else Afya.init();
+
+  // === PWA Service Worker — register & auto-update ===
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').then(function (reg) {
+        // Force la vérif de mise à jour à chaque page load
+        reg.update().catch(function () {});
+        // Quand un nouveau SW est trouvé, on lui dit de prendre le contrôle direct
+        reg.addEventListener('updatefound', function () {
+          var newSW = reg.installing;
+          if (!newSW) return;
+          newSW.addEventListener('statechange', function () {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              newSW.postMessage('SKIP_WAITING');
+            }
+          });
+        });
+      }).catch(function () {});
+      // Quand le SW prend le contrôle, on reload une fois pour récupérer la version live
+      var refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    });
+  }
 })();
 </script>
 </body>
