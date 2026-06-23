@@ -49,6 +49,99 @@
     </div>
   <% } %>
 
+  <!-- ============ LIVRAISON ============ -->
+  <div id="livraison" class="livraison-block <%= nbDispo === 0 ? 'livraison-urgent' : 'livraison-soft' %>">
+    <% if (typeof livraison !== 'undefined' && livraison === 'ok') { %>
+      <div class="livraison-success">
+        <div class="livraison-icon ok">✓</div>
+        <h2>Demande de livraison enregistrée</h2>
+        <p>Notre équipe va te contacter sur le numéro fourni dans les <strong>2 heures</strong> pour confirmer la dispo et l'adresse de livraison.</p>
+        <% if (med.sur_ordonnance) { %>
+          <p class="muted"><strong>⚠️ Médicament sur ordonnance</strong> — prépare ta photo d'ordonnance, on te la demandera au moment de la confirmation.</p>
+        <% } %>
+        <a href="/medicaments" class="btn btn-light">← Retour aux médicaments</a>
+      </div>
+
+    <% } else { %>
+      <div class="livraison-head">
+        <% if (nbDispo === 0) { %>
+          <span class="livraison-pill urgent">🚨 Rupture de stock</span>
+          <h2>Pas dispo près de chez toi ? <span class="accent">On te le livre.</span></h2>
+          <p class="livraison-lead">
+            Aucune pharmacie n'a actuellement <strong><%= L(med.nom_fr, med.nom_ar) %></strong> en stock.
+            Remplis le formulaire ci-dessous — notre équipe le sourcine et te le livre en 24-72h.
+          </p>
+        <% } else { %>
+          <span class="livraison-pill soft">🚚 Livraison disponible</span>
+          <h2>Pas dispo dans ta wilaya ? <span class="accent">On peut te le livrer.</span></h2>
+          <p class="livraison-lead">
+            <%= L(med.nom_fr, med.nom_ar) %> est dispo dans <%= nbDispo %> pharmacie<%= nbDispo > 1 ? 's' : '' %>, mais peut-être pas près de chez toi.
+            On peut te l'expédier où tu veux en Algérie.
+          </p>
+        <% } %>
+      </div>
+
+      <% if (typeof livraison !== 'undefined' && (livraison === 'invalid' || livraison === 'err')) { %>
+        <div class="livraison-alert">
+          <% if (livraison === 'invalid') { %>
+            ⚠️ Vérifie ton numéro de téléphone (format <strong>06/07/05</strong> ou <strong>+213</strong>) et que tous les champs requis sont remplis.
+          <% } else { %>
+            ⚠️ Une erreur est survenue. Réessaie dans un instant.
+          <% } %>
+        </div>
+      <% } %>
+
+      <form action="/medicaments/<%= med.id %>/livraison" method="post" class="livraison-form">
+        <div class="livraison-row">
+          <label>
+            <span>Nom complet *</span>
+            <input type="text" name="nom" required maxlength="120" placeholder="Amir M." value="<%= typeof user !== 'undefined' && user ? (user.prenom + ' ' + (user.nom || '')).trim() : '' %>">
+          </label>
+          <label>
+            <span>Téléphone *</span>
+            <input type="tel" name="telephone" required maxlength="30" placeholder="0555 12 34 56">
+          </label>
+        </div>
+
+        <div class="livraison-row">
+          <label>
+            <span>Wilaya *</span>
+            <select name="wilaya" required>
+              <option value="">Choisis ta wilaya…</option>
+              <% wilayas.forEach(w => { %>
+                <option value="<%= w.nom_fr %>"><%= w.code %> · <%= w.nom_fr %></option>
+              <% }) %>
+            </select>
+          </label>
+          <label class="full">
+            <span>Adresse de livraison *</span>
+            <input type="text" name="adresse" required maxlength="400" placeholder="N°, rue, quartier, ville">
+          </label>
+        </div>
+
+        <label>
+          <span>Message (facultatif)</span>
+          <textarea name="message" maxlength="500" rows="2" placeholder="Quantité, instructions particulières, créneau préféré…"></textarea>
+        </label>
+
+        <% if (med.sur_ordonnance) { %>
+          <div class="livraison-rx-note">
+            📋 <strong>Médicament sur ordonnance</strong> — on te demandera la photo de ton ordonnance lors de l'appel de confirmation.
+          </div>
+        <% } %>
+
+        <button type="submit" class="btn-livraison">
+          📦 Demander la livraison
+        </button>
+
+        <p class="livraison-fine">
+          Service en partenariat avec pharmacies algériennes agréées. Livraison 24-72h selon wilaya. Paiement à la livraison.
+          En soumettant, tu acceptes nos <a href="/conditions">conditions</a> et <a href="/confidentialite">notre politique de confidentialité</a>.
+        </p>
+      </form>
+    <% } %>
+  </div>
+
   <% if (suggestions && suggestions.length) { %>
     <div class="suggest-section reveal">
       <h2 class="section-title"><%= t('suggest_medicaments') %></h2>

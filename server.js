@@ -65,6 +65,22 @@ db.exec(`
     cree_le       TEXT NOT NULL DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS idx_inscrits_lancement_email ON inscrits_lancement(email);
+
+  CREATE TABLE IF NOT EXISTS demandes_livraison (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    medicament_id   INTEGER NOT NULL REFERENCES medicaments(id),
+    utilisateur_id  INTEGER REFERENCES utilisateurs(id),
+    nom_complet     TEXT NOT NULL,
+    telephone       TEXT NOT NULL,
+    wilaya          TEXT NOT NULL,
+    adresse         TEXT NOT NULL,
+    sur_ordonnance  INTEGER NOT NULL DEFAULT 0,
+    message         TEXT,
+    statut          TEXT NOT NULL DEFAULT 'nouvelle',
+    cree_le         TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_demandes_livraison_med ON demandes_livraison(medicament_id, statut);
+  CREATE INDEX IF NOT EXISTS idx_demandes_livraison_user ON demandes_livraison(utilisateur_id);
 `);
 
 const app = express();
@@ -772,7 +788,49 @@ app.get('/medicaments/:id', (req, res) => {
     suggestions = suggestions.concat(extra);
   }
 
-  res.render('medicament', { med, pharmacies, wilayas: getWilayas(), wilaya, suggestions });
+  const nbDispo = pharmacies.filter((p) => p.disponible).length;
+  const livraison = String(req.query.livraison || '');
+  res.render('medicament', {
+    med,
+    pharmacies,
+    wilayas: getWilayas(),
+    wilaya,
+    suggestions,
+    nbDispo,
+    livraison,
+  });
+});
+
+// --- Livraison médicaments (rupture de stock proche) -----------------------
+app.post('/medicaments/:id/livraison', (req, res) => {
+  const med = db.prepare('SELECT * FROM medicaments WHERE id = ?').get(req.params.id);
+  if (!med) return res.status(404).render('404');
+
+  const nom = String(req.body.nom || '').trim().slice(0, 120);
+  const telephone = String(req.body.telephone || '').trim().slice(0, 30);
+  const wilaya = String(req.body.wilaya || '').trim().slice(0, 80);
+  const adresse = String(req.body.adresse || '').trim().slice(0, 400);
+  const message = String(req.body.message || '').trim().slice(0, 500) || null;
+  const userId = req.session.user ? req.session.user.id : null;
+
+  // Validation : tél algérien ou international (06/07/05 ou +213…)
+  const telOk = /^(\+?213\s?[567]\d{8}|0[567]\d{8})$/.test(telephone.replace(/[\s.-]/g, ''));
+  const reqOk = nom.length >= 2 && telOk && wilaya.length >= 2 && adresse.length >= 5;
+  if (!reqOk) {
+    return res.redirect(`/medicaments/${med.id}?livraison=invalid#livraison`);
+  }
+
+  try {
+    db.prepare(
+      `INSERT INTO demandes_livraison (medicament_id, utilisateur_id, nom_complet, telephone, wilaya, adresse, sur_ordonnance, message)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(med.id, userId, nom, telephone, wilaya, adresse, med.sur_ordonnance ? 1 : 0, message);
+    console.log(`[livraison] ${new Date().toISOString()} ← ${nom} (${telephone}) ${wilaya} — ${med.nom_fr}${med.sur_ordonnance ? ' [ORDO]' : ''}`);
+    return res.redirect(`/medicaments/${med.id}?livraison=ok#livraison`);
+  } catch (e) {
+    console.error('[livraison] erreur insert:', e);
+    return res.redirect(`/medicaments/${med.id}?livraison=err#livraison`);
+  }
 });
 
 // --- Authentification -------------------------------------------------------
