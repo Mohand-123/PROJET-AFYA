@@ -107,14 +107,14 @@
         <!-- Search card -->
         <div style="background:var(--af-surface);border-radius:20px;padding:14px;box-shadow:0 28px 64px rgba(5,46,42,.4);color:var(--af-text);max-width:540px;">
           <div style="display:flex;gap:6px;margin-bottom:12px;">
-            <button data-tab="medecin" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:var(--af-primary);color:#fff;box-shadow:0 6px 16px var(--af-shadow);transition:all .2s;"><span data-ar="طبيب">🩺 Médecin</span></button>
-            <button data-tab="pharmacie" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="صيدلية">💊 Pharmacie</span></button>
-            <button data-tab="medicament" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="دواء">🔍 Médicament</span></button>
+            <button type="button" data-tab="medecin" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:var(--af-primary);color:#fff;box-shadow:0 6px 16px var(--af-shadow);transition:all .2s;"><span data-ar="طبيب">🩺 Médecin</span></button>
+            <button type="button" data-tab="pharmacie" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="صيدلية">💊 Pharmacie</span></button>
+            <button type="button" data-tab="medicament" onclick="window.afya.setTab(this)" style="flex:1;padding:10px;border-radius:10px;font-weight:600;font-size:14px;background:transparent;color:var(--af-muted);transition:all .2s;"><span data-ar="دواء">🔍 Médicament</span></button>
           </div>
           <div style="display:flex;align-items:center;gap:8px;background:var(--af-surface-2);border-radius:12px;padding:6px;padding-inline-start:16px;">
             <span style="font-size:18px;opacity:.6;">🔎</span>
             <input id="af-search" data-fr-ph="Spécialité, nom du médecin, ville…" data-ar-ph="التخصص، اسم الطبيب، المدينة…" placeholder="Spécialité, nom du médecin, ville…" style="flex:1;border:none;background:transparent;outline:none;font-size:16px;color:var(--af-text);font-family:inherit;min-width:0;">
-            <button data-btn="" style="background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;white-space:nowrap;" data-ar="بحث">Rechercher</button>
+            <button type="button" id="af-search-btn" data-btn="" style="background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;white-space:nowrap;cursor:pointer;" data-ar="بحث">Rechercher</button>
           </div>
           <div id="af-chips" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding:2px 4px;"></div>
         </div>
@@ -142,7 +142,7 @@
             <span style="padding:9px 13px;border-radius:9px;background:var(--af-surface-2);font-size:13px;font-weight:600;">10:00</span>
             <span style="padding:9px 13px;border-radius:9px;background:var(--af-surface-2);font-size:13px;font-weight:600;">11:30</span>
           </div>
-          <button data-btn="" style="width:100%;margin-top:16px;background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;" data-ar="تأكيد الموعد">Confirmer le rendez-vous</button>
+          <button type="button" data-btn="" style="width:100%;margin-top:16px;background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:11px;cursor:pointer;" data-ar="تأكيد الموعد" onclick="window.location.href='/medecins'">Confirmer le rendez-vous</button>
         </div>
 
         <div style="position:absolute;inset-inline-start:0;top:78px;background:var(--af-surface);color:var(--af-text);border-radius:15px;padding:12px 16px;box-shadow:0 18px 44px rgba(5,46,42,.3);font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;animation:af-floatA 5s ease-in-out infinite;">
@@ -587,16 +587,17 @@
     },
     wireSearch: function () {
       var that = this;
-      var btn = this.root.querySelector('button[data-btn][data-ar="بحث"]');
+      var btn = document.getElementById('af-search-btn');
       var input = this.searchInput;
-      if (!input || !btn) return;
+      if (!input || !btn) { console.warn('[afya] search button or input not found', { btn: !!btn, input: !!input }); return; }
       var go = function () {
         var routeByTab = { medecin: '/medecins', pharmacie: '/pharmacies', medicament: '/medicaments' };
         var route = routeByTab[that.tab] || '/medecins';
         var q = (input.value || '').trim();
-        window.location.href = route + (q ? ('?q=' + encodeURIComponent(q)) : '');
+        var target = route + (q ? ('?q=' + encodeURIComponent(q)) : '');
+        window.location.href = target;
       };
-      btn.addEventListener('click', function (e) { e.preventDefault(); go(); });
+      btn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); go(); });
       input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); go(); } });
     },
     toggleLang: function () {
