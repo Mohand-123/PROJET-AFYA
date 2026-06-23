@@ -9,3 +9,6 @@ npm-debug.log*
 *.log
 .DS_Store
 data/yajid-*
+
+# Marketing assets (videos HyperFrames, etc) — pas besoin sur Render
+marketing/

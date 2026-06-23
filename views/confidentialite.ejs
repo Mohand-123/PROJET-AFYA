@@ -1,0 +1,59 @@
+<%- include('partials/head') %>
+
+<section class="container section legal-page">
+  <h1 class="page-title">🔒 Politique de confidentialité</h1>
+  <p class="lead">Dernière mise à jour : 23 juin 2026 — Version 2.0.0</p>
+
+  <h2>1. Qui sommes-nous ?</h2>
+  <p>Afya (عافية) est une plateforme algérienne permettant la prise de rendez-vous médicaux, la consultation de la disponibilité des médicaments et la recherche de pharmacies de garde dans les 58 wilayas du pays. Le service est édité à titre personnel par <strong>Amir Mohand Arezki</strong> et accessible via le site <a href="https://afya.dz">afya.dz</a> ainsi que les applications mobiles iOS et Android.</p>
+
+  <h2>2. Quelles données collectons-nous ?</h2>
+  <ul>
+    <li><strong>Données de compte</strong> : email, nom, prénom, mot de passe (haché avec bcrypt — jamais stocké en clair).</li>
+    <li><strong>Données de rendez-vous</strong> : médecin choisi, date, motif (facultatif), wilaya.</li>
+    <li><strong>Données techniques</strong> : adresse IP, type d'appareil, pages visitées (logs serveur conservés 30 jours pour la sécurité).</li>
+    <li><strong>Cookies</strong> : un seul cookie de session HTTP-only, durée 7 jours, pour maintenir votre connexion. Aucun cookie publicitaire, aucun tracker tiers.</li>
+  </ul>
+
+  <h2>3. À quoi servent ces données ?</h2>
+  <ul>
+    <li>Vous permettre de prendre des rendez-vous et de les retrouver dans votre espace personnel.</li>
+    <li>Permettre aux professionnels de santé (médecins, pharmaciens) de gérer leurs disponibilités et leurs patients.</li>
+    <li>Améliorer le service (statistiques anonymisées d'utilisation).</li>
+  </ul>
+  <p><strong>Nous ne vendons aucune donnée à des tiers. Jamais.</strong></p>
+
+  <h2>4. Où sont stockées vos données ?</h2>
+  <p>Les données sont hébergées sur des serveurs <strong>Render</strong> situés à Francfort (Allemagne, Union Européenne), conformément au RGPD. La base de données utilise SQLite chiffrée au repos.</p>
+
+  <h2>5. Vos droits</h2>
+  <p>Conformément à la loi algérienne 18-07 sur la protection des personnes physiques dans le traitement des données à caractère personnel, et au RGPD si vous résidez en UE :</p>
+  <ul>
+    <li><strong>Accès</strong> : consulter toutes les données qui vous concernent.</li>
+    <li><strong>Rectification</strong> : corriger toute information inexacte.</li>
+    <li><strong>Suppression</strong> : effacer votre compte et toutes vos données (irréversible).</li>
+    <li><strong>Portabilité</strong> : récupérer vos données dans un format lisible (JSON).</li>
+    <li><strong>Opposition</strong> : refuser certains traitements.</li>
+  </ul>
+  <p>Pour exercer ces droits, envoyez un email à <a href="mailto:contact@afya.dz">contact@afya.dz</a>. Réponse sous 30 jours maximum.</p>
+
+  <h2>6. Sécurité</h2>
+  <p>Mots de passe hachés avec bcrypt (coût 10), connexion HTTPS obligatoire (TLS 1.3), sessions sécurisées, protection contre les injections SQL via requêtes paramétrées, validation des entrées utilisateur.</p>
+
+  <h2>7. Données médicales</h2>
+  <p>Afya <strong>ne stocke aucun dossier médical, aucun résultat d'analyse, aucune ordonnance</strong>. Les rendez-vous contiennent uniquement le motif que vous saisissez librement (facultatif). Toute information sensible reste entre vous et votre praticien.</p>
+
+  <h2>8. Mineurs</h2>
+  <p>L'inscription est ouverte à partir de 16 ans. Pour les mineurs, un parent ou tuteur doit créer le compte.</p>
+
+  <h2>9. Modifications</h2>
+  <p>Cette politique peut être mise à jour. Toute modification substantielle vous sera notifiée par email et via une bannière dans l'application.</p>
+
+  <h2>10. Contact</h2>
+  <p>
+    Pour toute question : <a href="mailto:contact@afya.dz">contact@afya.dz</a><br>
+    Responsable du traitement : Amir Mohand Arezki, Alger, Algérie.
+  </p>
+</section>
+
+<%- include('partials/foot') %>

@@ -1130,6 +1130,10 @@ app.post('/contact', (req, res) => {
   res.redirect('/contact?sent=1');
 });
 
+// --- Pages légales (requises pour Play Store + App Store) ------------------
+app.get('/confidentialite', (req, res) => res.render('confidentialite'));
+app.get('/conditions', (req, res) => res.render('conditions'));
+
 // --- 404 --------------------------------------------------------------------
 app.use((req, res) => res.status(404).render('404'));
 
