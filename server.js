@@ -54,6 +54,17 @@ db.exec(`
     debut_le        TEXT NOT NULL DEFAULT (datetime('now')),
     fin_le          TEXT
   );
+
+  CREATE TABLE IF NOT EXISTS inscrits_lancement (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    email         TEXT NOT NULL UNIQUE,
+    prenom        TEXT,
+    plateforme    TEXT,
+    source        TEXT NOT NULL DEFAULT 'home',
+    user_agent    TEXT,
+    cree_le       TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_inscrits_lancement_email ON inscrits_lancement(email);
 `);
 
 const app = express();
@@ -359,7 +370,9 @@ app.get('/', (req, res) => {
     medicaments: db.prepare('SELECT COUNT(*) AS n FROM medicaments').get().n,
     wilayas: db.prepare('SELECT COUNT(*) AS n FROM wilayas').get().n,
   };
-  res.render('index', { specialites, wilayas, pharmaGarde, stats });
+  const early = String(req.query.early || '');
+  const earlyCount = db.prepare('SELECT COUNT(*) AS n FROM inscrits_lancement').get().n;
+  res.render('index', { specialites, wilayas, pharmaGarde, stats, early, earlyCount });
 });
 
 // --- Médecins : liste + recherche -------------------------------------------
@@ -1133,6 +1146,37 @@ app.post('/contact', (req, res) => {
 // --- Pages légales (requises pour Play Store + App Store) ------------------
 app.get('/confidentialite', (req, res) => res.render('confidentialite'));
 app.get('/conditions', (req, res) => res.render('conditions'));
+
+// --- Pré-inscription lancement app mobile ----------------------------------
+app.post('/pre-inscription', (req, res) => {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const prenom = String(req.body.prenom || '').trim().slice(0, 80) || null;
+  const plateforme = String(req.body.plateforme || '').trim().toLowerCase();
+  const okPlateforme = ['ios', 'android', 'les_deux', ''].includes(plateforme) ? (plateforme || null) : null;
+  const source = String(req.body.source || 'home').trim().slice(0, 40);
+  const ua = (req.headers['user-agent'] || '').slice(0, 240);
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  if (!emailOk) {
+    return res.redirect('/?early=invalid#early-access');
+  }
+
+  try {
+    db.prepare(`
+      INSERT INTO inscrits_lancement (email, prenom, plateforme, source, user_agent)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(email, prenom, okPlateforme, source, ua);
+    console.log(`[early-access] ${new Date().toISOString()} ← ${email} (${okPlateforme || 'n/a'}) prenom=${prenom || '-'}`);
+    return res.redirect('/?early=ok#early-access');
+  } catch (e) {
+    if (String(e.message).toLowerCase().includes('unique')) {
+      // Email déjà inscrit
+      return res.redirect('/?early=dup#early-access');
+    }
+    console.error('[early-access] erreur insert:', e);
+    return res.redirect('/?early=err#early-access');
+  }
+});
 
 // --- 404 --------------------------------------------------------------------
 app.use((req, res) => res.status(404).render('404'));

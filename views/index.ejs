@@ -53,6 +53,7 @@
     [data-af=garde] > div{padding:40px 30px!important}
     [data-af=garde-art]{min-height:300px!important}
     [data-af=pros]{grid-template-columns:1fr!important;gap:40px!important;padding:64px 22px!important}
+    [data-af=early-grid]{grid-template-columns:1fr!important;gap:40px!important;padding:64px 22px!important}
     [data-af=nav]{display:none!important}
   }
   @media (max-width:640px){
@@ -62,6 +63,8 @@
     [data-af=header]{padding:0 16px!important;gap:14px!important}
     [data-af=hero] h1{font-size:38px!important}
     [data-af=garde] > div:first-child{padding:36px 24px!important}
+    [data-af=early-card]{padding:24px!important}
+    [data-af=early] h2{font-size:32px!important}
   }
 </style>
 
@@ -294,6 +297,131 @@
           <a href="/pour-les-pros" data-btn="" style="background:var(--af-primary);color:#fff;font-weight:700;font-size:15px;padding:15px 26px;border-radius:12px;box-shadow:0 12px 28px var(--af-shadow);" data-ar="اكتشف العروض">Découvrir les offres →</a>
           <span style="font-size:14px;color:var(--af-muted);" data-ar="مجاني · Standard 2 990 دج · Premium 6 990 دج">Gratuit · Standard 2 990 DA · Premium 6 990 DA</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EARLY ACCESS — APP MOBILE BIENTÔT ============ -->
+  <section id="early-access" data-af="early" style="position:relative;background:linear-gradient(143deg,#0A6F66 0%,#0E9C8A 46%,#16B79E 100%);color:#fff;overflow:hidden;">
+    <div style="position:absolute;top:-160px;inset-inline-end:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 65%);"></div>
+    <div style="position:absolute;bottom:-200px;inset-inline-start:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(8,60,55,.5),transparent 62%);"></div>
+
+    <div style="max-width:1100px;margin:0 auto;padding:88px 24px;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;position:relative;z-index:2;" data-af="early-grid">
+
+      <!-- LEFT — Pitch -->
+      <div>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">
+          📱 <span data-ar="قريباً">Bientôt</span>
+        </span>
+        <h2 style="font-size:clamp(30px,3.6vw,46px);font-weight:800;letter-spacing:-.025em;line-height:1.05;margin:18px 0 14px;" data-ar="تطبيق Afya يصل قريباً إلى iOS وAndroid">
+          L'app Afya arrive bientôt sur iOS et Android.
+        </h2>
+        <p style="font-size:18px;line-height:1.6;color:rgba(255,255,255,.92);max-width:520px;margin:0 0 20px;" data-ar="كن من الأوائل لاستخدامها. اترك بريدك وسنُعلمك فور إطلاق التطبيق — بدون رسائل مزعجة، ولا إعلانات.">
+          Sois parmi les premiers à l'utiliser. Laisse ton email et on te prévient au lancement — zéro spam, zéro pub.
+        </p>
+
+        <!-- Bénéfices -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;font-size:15px;color:rgba(255,255,255,.95);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.18);display:inline-flex;align-items:center;justify-content:center;font-size:13px;">✓</span>
+            <span data-ar="إشعار حصري قبل الإطلاق العام">Notification exclusive avant la sortie publique</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.18);display:inline-flex;align-items:center;justify-content:center;font-size:13px;">✓</span>
+            <span data-ar="وصول مبكر مجاني إلى الميزات الجديدة">Accès anticipé gratuit aux nouvelles fonctionnalités</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.18);display:inline-flex;align-items:center;justify-content:center;font-size:13px;">✓</span>
+            <span data-ar="بريد إلكتروني واحد فقط: في يوم الإطلاق">Un seul email : le jour du lancement</span>
+          </div>
+        </div>
+
+        <% if (typeof earlyCount !== 'undefined' && earlyCount > 0) { %>
+          <div style="display:inline-flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.85);">
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:#7FE3D2;box-shadow:0 0 0 4px rgba(127,227,210,.25);"></span>
+              <strong style="color:#fff;font-weight:800;font-size:16px;"><%= earlyCount.toLocaleString('fr-FR') %></strong>
+              <span data-ar="شخص ينتظر الإطلاق">personnes attendent déjà le lancement</span>
+            </span>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- RIGHT — Form card -->
+      <div data-af="early-card" style="background:var(--af-surface);color:var(--af-text);border-radius:24px;padding:32px;box-shadow:0 32px 70px rgba(5,46,42,.35);">
+
+        <% if (typeof early !== 'undefined' && early === 'ok') { %>
+          <!-- État : succès -->
+          <div style="text-align:center;padding:14px 6px;">
+            <div style="width:74px;height:74px;border-radius:22px;background:linear-gradient(140deg,#0E9C8A,#16B79E);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:38px;box-shadow:0 16px 36px rgba(14,156,138,.4);">✓</div>
+            <h3 style="font-size:24px;font-weight:800;letter-spacing:-.01em;margin:0 0 10px;color:var(--af-text);" data-ar="تم تسجيلك بنجاح !">Inscrit avec succès !</h3>
+            <p style="font-size:15px;line-height:1.55;color:var(--af-muted);margin:0 0 18px;" data-ar="ستتلقى بريداً إلكترونياً فور توفر التطبيق على iOS وAndroid. شكراً لثقتك 🇩🇿">Tu recevras un email dès que l'app sera disponible sur iOS et Android. Merci pour ta confiance 🇩🇿</p>
+            <a href="/" data-btn="" style="display:inline-block;padding:12px 24px;border-radius:12px;background:var(--af-surface-2);color:var(--af-text);font-weight:700;font-size:14px;" data-ar="العودة">← Revenir à l'accueil</a>
+          </div>
+
+        <% } else if (typeof early !== 'undefined' && early === 'dup') { %>
+          <!-- État : déjà inscrit -->
+          <div style="text-align:center;padding:14px 6px;">
+            <div style="width:74px;height:74px;border-radius:22px;background:linear-gradient(140deg,#F5683B,#FF8A5C);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:34px;">📩</div>
+            <h3 style="font-size:24px;font-weight:800;letter-spacing:-.01em;margin:0 0 10px;color:var(--af-text);" data-ar="أنت مُسجَّل بالفعل">Tu es déjà inscrit !</h3>
+            <p style="font-size:15px;line-height:1.55;color:var(--af-muted);margin:0;" data-ar="بريدك في قائمتنا. ستتلقى إشعاراً يوم الإطلاق.">Ton email est déjà dans la liste. Tu seras prévenu le jour J.</p>
+          </div>
+
+        <% } else { %>
+          <!-- État : formulaire -->
+          <div style="margin-bottom:18px;">
+            <div style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--af-primary);" data-ar="انضم إلى قائمة الانتظار">Rejoindre la liste d'attente</div>
+            <h3 style="font-size:22px;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;color:var(--af-text);" data-ar="جاهز للإطلاق؟">Prêt pour le lancement ?</h3>
+            <p style="font-size:14px;color:var(--af-muted);margin:0;" data-ar="بريد واحد فقط، فور توفر التطبيق.">Un seul email, dès que l'app est disponible.</p>
+          </div>
+
+          <% if (typeof early !== 'undefined' && (early === 'invalid' || early === 'err')) { %>
+            <div style="background:rgba(245,104,59,.12);border:1px solid rgba(245,104,59,.4);color:#A53C1C;padding:11px 14px;border-radius:11px;font-size:13.5px;margin-bottom:14px;font-weight:500;">
+              <% if (early === 'invalid') { %>
+                ⚠️ Email invalide. Vérifie le format puis réessaie.
+              <% } else { %>
+                ⚠️ Une erreur est survenue. Réessaie dans un instant.
+              <% } %>
+            </div>
+          <% } %>
+
+          <form action="/pre-inscription" method="post" style="display:flex;flex-direction:column;gap:12px;">
+            <input type="hidden" name="source" value="home-early">
+
+            <label style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--af-muted);letter-spacing:.04em;text-transform:uppercase;" data-ar="بريدك الإلكتروني">Ton email</span>
+              <input type="email" name="email" required placeholder="toi@exemple.dz" style="height:48px;padding:0 14px;border-radius:11px;border:1.5px solid var(--af-border);background:var(--af-surface-2);color:var(--af-text);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s,background .2s;" onfocus="this.style.borderColor='var(--af-primary)';this.style.background='var(--af-surface)'" onblur="this.style.borderColor='var(--af-border)';this.style.background='var(--af-surface-2)'">
+            </label>
+
+            <label style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--af-muted);letter-spacing:.04em;text-transform:uppercase;" data-ar="الاسم (اختياري)">Prénom (facultatif)</span>
+              <input type="text" name="prenom" maxlength="80" placeholder="Amir" style="height:48px;padding:0 14px;border-radius:11px;border:1.5px solid var(--af-border);background:var(--af-surface-2);color:var(--af-text);font-size:15px;font-family:inherit;outline:none;transition:border-color .2s,background .2s;" onfocus="this.style.borderColor='var(--af-primary)';this.style.background='var(--af-surface)'" onblur="this.style.borderColor='var(--af-border)';this.style.background='var(--af-surface-2)'">
+            </label>
+
+            <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <legend style="font-size:12px;font-weight:600;color:var(--af-muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px;" data-ar="منصتك المفضلة">Ta plateforme préférée</legend>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border-radius:11px;border:1.5px solid var(--af-border);background:var(--af-surface-2);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;">
+                  <input type="radio" name="plateforme" value="ios" style="accent-color:var(--af-primary);">  iOS
+                </label>
+                <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border-radius:11px;border:1.5px solid var(--af-border);background:var(--af-surface-2);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;">
+                  <input type="radio" name="plateforme" value="android" style="accent-color:var(--af-primary);"> Android
+                </label>
+                <label style="display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;border-radius:11px;border:1.5px solid var(--af-border);background:var(--af-surface-2);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;">
+                  <input type="radio" name="plateforme" value="les_deux" checked style="accent-color:var(--af-primary);"> Les deux
+                </label>
+              </div>
+            </fieldset>
+
+            <button type="submit" data-btn="" style="margin-top:6px;height:52px;border-radius:12px;background:var(--af-primary);color:#fff;font-weight:800;font-size:15.5px;letter-spacing:.01em;box-shadow:0 14px 30px var(--af-shadow);cursor:pointer;font-family:inherit;" data-ar="إعلامي عند الإطلاق">
+              📬 Préviens-moi au lancement
+            </button>
+
+            <p style="font-size:12px;color:var(--af-muted);line-height:1.5;margin:6px 0 0;text-align:center;" data-ar="من خلال التسجيل، أنت توافق على سياسة الخصوصية. يُستخدم بريدك حصرياً لإشعار الإطلاق.">
+              En t'inscrivant, tu acceptes notre <a href="/confidentialite" style="color:var(--af-primary);font-weight:600;">politique de confidentialité</a>. Ton email sert uniquement à t'annoncer le lancement.
+            </p>
+          </form>
+        <% } %>
       </div>
     </div>
   </section>
