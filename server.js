@@ -402,11 +402,15 @@ app.get('/medecins', (req, res) => {
   if (specialite) { cond.push('m.specialite_id = ?'); params.push(specialite); }
   if (wilaya) { cond.push('m.wilaya = ?'); params.push(wilaya); }
   if (q) {
-    cond.push('(m.nom LIKE ? OR m.prenom LIKE ? OR m.ville LIKE ?)');
-    params.push(`%${q}%`, `%${q}%`, `%${q}%`);
+    // La recherche texte couvre aussi la spécialité (FR/AR) et la wilaya :
+    // taper « Cardiologue » depuis la home doit lister les cardiologues.
+    cond.push('(m.nom LIKE ? OR m.prenom LIKE ? OR m.ville LIKE ? OR m.wilaya LIKE ? OR s.nom_fr LIKE ? OR s.nom_ar LIKE ?)');
+    params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
   }
   const where = cond.length ? 'WHERE ' + cond.join(' AND ') : '';
-  const total = db.prepare(`SELECT COUNT(*) AS n FROM medecins m ${where}`).get(...params).n;
+  const total = db
+    .prepare(`SELECT COUNT(*) AS n FROM medecins m JOIN specialites s ON s.id = m.specialite_id ${where}`)
+    .get(...params).n;
   const medecins = db
     .prepare(
       `SELECT m.*, s.nom_fr AS spec_fr, s.nom_ar AS spec_ar, s.icone AS spec_icone
@@ -620,13 +624,18 @@ app.post('/medecins/:id/avis', requireAuth, (req, res) => {
 
 // --- Pharmacies -------------------------------------------------------------
 app.get('/pharmacies', (req, res) => {
-  const { q = '', wilaya = '', garde = '' } = req.query;
+  let { q = '', wilaya = '', garde = '' } = req.query;
+  // Requêtes texte « intelligentes » venant de la barre de recherche home :
+  // « De garde » → filtre garde ; « Ouverte maintenant » → liste complète (tri garde d'abord).
+  const qNorm = String(q).trim().toLowerCase();
+  if (/garde/.test(qNorm)) { garde = '1'; q = ''; }
+  else if (/ouvert/.test(qNorm)) { q = ''; }
   const page = Math.max(1, Number(req.query.page) || 1);
   const offset = (page - 1) * PAGE_SIZE;
   const cond = [];
   const params = [];
   if (wilaya) { cond.push('wilaya = ?'); params.push(wilaya); }
-  if (q) { cond.push('(nom LIKE ? OR ville LIKE ?)'); params.push(`%${q}%`, `%${q}%`); }
+  if (q) { cond.push('(nom LIKE ? OR ville LIKE ? OR wilaya LIKE ?)'); params.push(`%${q}%`, `%${q}%`, `%${q}%`); }
   if (garde) cond.push('de_garde = 1');
   const where = cond.length ? 'WHERE ' + cond.join(' AND ') : '';
   const total = db.prepare(`SELECT COUNT(*) AS n FROM pharmacies ${where}`).get(...params).n;
