@@ -1425,19 +1425,37 @@ html { scroll-behavior: smooth; }
   margin: 0 0 18px;
 }
 .pro-type-label {
+  position: relative;
   display: flex !important;
   flex-direction: row !important;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px;
+  padding: 15px 10px;
   border: 1.5px solid var(--line);
-  border-radius: 11px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: .98rem;
+  color: var(--muted);
   cursor: pointer;
-  transition: border-color .2s, background .2s;
+  text-align: center;
+  transition: all .2s var(--ease-out);
 }
-.pro-type-label:has(input:checked) { border-color: var(--teal); background: var(--teal-soft); }
-.pro-type-label input { accent-color: var(--teal); }
+.pro-type-label:hover { border-color: var(--teal); color: var(--teal-dark); transform: translateY(-1px); }
+.pro-type-label:has(input:checked) {
+  border-color: transparent;
+  background: var(--gradient-accent);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(15, 157, 142, .35);
+}
+/* Radio natif masqué — la carte entière EST le bouton */
+.pro-type-label input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
 .pro-fine {
   font-size: .8rem;
   color: var(--muted);
