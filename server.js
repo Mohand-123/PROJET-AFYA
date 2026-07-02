@@ -231,7 +231,7 @@ async function envoyerEmailConfirmation(email, prenom) {
     method: 'POST',
     headers: { 'api-key': key, 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({
-      sender: { name: 'Afya', email: process.env.EMAIL_FROM || 'mohendarzekiamir@gmail.com' },
+      sender: { name: 'Afya', email: process.env.EMAIL_FROM || 'mohandpro744@gmail.com' },
       to: [{ email, ...(prenom ? { name: prenom } : {}) }],
       subject: '✅ Inscription confirmée — Afya arrive bientôt sur iOS et Android',
       htmlContent: `
@@ -272,6 +272,75 @@ async function envoyerEmailConfirmation(email, prenom) {
     throw new Error(`Brevo HTTP ${r.status} — ${body.slice(0, 200)}`);
   }
   console.log(`[email] confirmation envoyée à ${email}`);
+}
+
+/**
+ * Enregistre l'inscrit comme contact Brevo (liste « AFYA Lancement »).
+ * CRUCIAL : le disque Render free est éphémère — SQLite est recréée à chaque
+ * deploy. Brevo est donc la source de vérité durable de la liste d'attente,
+ * et l'outil qui enverra l'email du lancement.
+ */
+async function ajouterContactBrevo(email, prenom, plateforme) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) return;
+  const listId = Number(process.env.BREVO_LIST_ID || 3);
+  const r = await fetch('https://api.brevo.com/v3/contacts', {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      email,
+      attributes: { PRENOM: prenom || '', PLATEFORME: plateforme || '' },
+      listIds: [listId],
+      updateEnabled: true,
+    }),
+  });
+  // 201 = créé, 204 = mis à jour — les deux sont OK
+  if (!r.ok && r.status !== 204) {
+    const body = await r.text().catch(() => '');
+    throw new Error(`Brevo contacts HTTP ${r.status} — ${body.slice(0, 200)}`);
+  }
+  console.log(`[brevo] contact enregistré: ${email} (liste ${listId})`);
+}
+
+/**
+ * Notifie Amir par email d'une nouvelle demande de livraison — la BDD étant
+ * éphémère sur Render free, l'email est la trace durable de chaque demande.
+ */
+async function notifierDemandeLivraison(d, med) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) {
+    console.log('[email] BREVO_API_KEY absente — notification livraison non envoyée');
+    return;
+  }
+  const dest = process.env.NOTIF_EMAIL || 'mohandpro744@gmail.com';
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      sender: { name: 'Afya Livraisons', email: process.env.EMAIL_FROM || 'mohandpro744@gmail.com' },
+      to: [{ email: dest }],
+      subject: `📦 Livraison demandée : ${med.nom_fr} — ${d.wilaya}${med.sur_ordonnance ? ' [ORDONNANCE]' : ''}`,
+      htmlContent: `
+<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;padding:20px;">
+  <h2 style="color:#0E9C8A;margin:0 0 16px;">📦 Nouvelle demande de livraison</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Médicament</td><td style="padding:8px;">${med.nom_fr}${med.dosage ? ' · ' + med.dosage : ''} (${med.dci})</td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Ordonnance</td><td style="padding:8px;">${med.sur_ordonnance ? '⚠️ OUI — demander la photo' : 'Non'}</td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Client</td><td style="padding:8px;">${d.nom}</td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Téléphone</td><td style="padding:8px;"><a href="tel:${d.telephone}">${d.telephone}</a></td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Wilaya</td><td style="padding:8px;">${d.wilaya}</td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Adresse</td><td style="padding:8px;">${d.adresse}</td></tr>
+    ${d.message ? `<tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Message</td><td style="padding:8px;">${d.message}</td></tr>` : ''}
+  </table>
+  <p style="font-size:13px;color:#8fa89b;margin-top:16px;">Rappel : contacter le client sous 2h (promesse du site). Booker un coursier Yassir une fois la pharmacie confirmée.</p>
+</div>`,
+    }),
+  });
+  if (!r.ok) {
+    const body = await r.text().catch(() => '');
+    throw new Error(`Brevo HTTP ${r.status} — ${body.slice(0, 200)}`);
+  }
+  console.log(`[email] notification livraison envoyée à ${dest}`);
 }
 
 /** Reconstruit un JSON d'horaires hebdo depuis les champs day_X_m_start/end + day_X_a_start/end. */
@@ -907,6 +976,10 @@ app.post('/medicaments/:id/livraison', (req, res) => {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(med.id, userId, nom, telephone, wilaya, adresse, med.sur_ordonnance ? 1 : 0, message);
     console.log(`[livraison] ${new Date().toISOString()} ← ${nom} (${telephone}) ${wilaya} — ${med.nom_fr}${med.sur_ordonnance ? ' [ORDO]' : ''}`);
+    // Notification email (trace durable — la BDD Render est éphémère)
+    notifierDemandeLivraison({ nom, telephone, wilaya, adresse, message }, med).catch((e) =>
+      console.error('[email] échec notification livraison:', e.message)
+    );
     return res.redirect(`/medicaments/${med.id}?livraison=ok#livraison`);
   } catch (e) {
     console.error('[livraison] erreur insert:', e);
@@ -1306,9 +1379,12 @@ app.post('/pre-inscription', (req, res) => {
       VALUES (?, ?, ?, ?, ?)
     `).run(email, prenom, okPlateforme, source, ua);
     console.log(`[early-access] ${new Date().toISOString()} ← ${email} (${okPlateforme || 'n/a'}) prenom=${prenom || '-'}`);
-    // Confirmation par email — fire-and-forget : ne bloque jamais la réponse.
+    // Confirmation + persistance Brevo — fire-and-forget : ne bloque jamais la réponse.
     envoyerEmailConfirmation(email, prenom).catch((e) =>
       console.error('[email] échec confirmation:', e.message)
+    );
+    ajouterContactBrevo(email, prenom, okPlateforme).catch((e) =>
+      console.error('[brevo] échec contact:', e.message)
     );
     return res.redirect('/?early=ok#early-access');
   } catch (e) {
