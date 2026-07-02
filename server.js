@@ -395,6 +395,19 @@ app.get('/', (req, res) => {
 const PAGE_SIZE = 60;
 app.get('/medecins', (req, res) => {
   const { specialite = '', wilaya = '', q = '' } = req.query;
+  // Si la recherche texte EST une spécialité (« Cardiologue » depuis la home),
+  // on bascule sur le filtre Spécialité : le select se sélectionne, la barre
+  // se vide, les chips s'allument — un seul filtre actif au lieu de deux.
+  if (q && !specialite) {
+    const spec = db
+      .prepare('SELECT id FROM specialites WHERE LOWER(nom_fr) = LOWER(?) OR nom_ar = ?')
+      .get(q.trim(), q.trim());
+    if (spec) {
+      const canon = new URLSearchParams({ specialite: String(spec.id) });
+      if (wilaya) canon.set('wilaya', wilaya);
+      return res.redirect('/medecins?' + canon.toString());
+    }
+  }
   const page = Math.max(1, Number(req.query.page) || 1);
   const offset = (page - 1) * PAGE_SIZE;
   const cond = [];
