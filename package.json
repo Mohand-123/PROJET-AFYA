@@ -1,6 +1,6 @@
 {
   "name": "afya",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Afya (عافية) — plateforme algérienne de prise de rendez-vous médicaux, disponibilité des médicaments et horaires des pharmacies.",
   "main": "server.js",
   "type": "commonjs",

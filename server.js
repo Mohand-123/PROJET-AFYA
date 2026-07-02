@@ -66,6 +66,21 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS idx_inscrits_lancement_email ON inscrits_lancement(email);
 
+  CREATE TABLE IF NOT EXISTS demandes_pro (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    type          TEXT NOT NULL CHECK(type IN ('medecin','pharmacien')),
+    nom_complet   TEXT NOT NULL,
+    etablissement TEXT,
+    specialite    TEXT,
+    wilaya        TEXT NOT NULL,
+    telephone     TEXT NOT NULL,
+    email         TEXT NOT NULL,
+    message       TEXT,
+    statut        TEXT NOT NULL DEFAULT 'nouvelle',
+    cree_le       TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_demandes_pro_statut ON demandes_pro(statut);
+
   CREATE TABLE IF NOT EXISTS demandes_livraison (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     medicament_id   INTEGER NOT NULL REFERENCES medicaments(id),
@@ -341,6 +356,45 @@ async function notifierDemandeLivraison(d, med) {
     throw new Error(`Brevo HTTP ${r.status} — ${body.slice(0, 200)}`);
   }
   console.log(`[email] notification livraison envoyée à ${dest}`);
+}
+
+/** Notifie Amir d'une demande de compte professionnel (vérification manuelle). */
+async function notifierDemandePro(d) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) {
+    console.log('[email] BREVO_API_KEY absente — notification demande pro non envoyée');
+    return;
+  }
+  const dest = process.env.NOTIF_EMAIL || 'mohandpro744@gmail.com';
+  const typeLabel = d.type === 'medecin' ? '🩺 Médecin' : '💊 Pharmacien';
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      sender: { name: 'Afya Pros', email: process.env.EMAIL_FROM || 'mohandpro744@gmail.com' },
+      to: [{ email: dest }],
+      subject: `${typeLabel} veut rejoindre Afya : ${d.nom_complet} (${d.wilaya})`,
+      htmlContent: `
+<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;padding:20px;">
+  <h2 style="color:#0E9C8A;margin:0 0 16px;">${typeLabel} — nouvelle demande d'espace pro</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Nom</td><td style="padding:8px;">${d.nom_complet}</td></tr>
+    ${d.etablissement ? `<tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Établissement</td><td style="padding:8px;">${d.etablissement}</td></tr>` : ''}
+    ${d.specialite ? `<tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Spécialité</td><td style="padding:8px;">${d.specialite}</td></tr>` : ''}
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Wilaya</td><td style="padding:8px;">${d.wilaya}</td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Téléphone</td><td style="padding:8px;"><a href="tel:${d.telephone}">${d.telephone}</a></td></tr>
+    <tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Email</td><td style="padding:8px;"><a href="mailto:${d.email}">${d.email}</a></td></tr>
+    ${d.message ? `<tr><td style="padding:8px;background:#f1f8f6;font-weight:700;">Message</td><td style="padding:8px;">${d.message}</td></tr>` : ''}
+  </table>
+  <p style="font-size:13px;color:#8fa89b;margin-top:16px;">Promesse du site : contact sous 48h pour vérifier et activer l'espace pro.</p>
+</div>`,
+    }),
+  });
+  if (!r.ok) {
+    const body = await r.text().catch(() => '');
+    throw new Error(`Brevo HTTP ${r.status} — ${body.slice(0, 200)}`);
+  }
+  console.log(`[email] demande pro (${d.type}) notifiée à ${dest}`);
 }
 
 /** Reconstruit un JSON d'horaires hebdo depuis les champs day_X_m_start/end + day_X_a_start/end. */
@@ -1013,13 +1067,55 @@ app.post('/connexion', (req, res) => {
 });
 
 app.get('/inscription', (req, res) => {
-  res.render('inscription', { err: '', valeurs: {} });
+  res.render('inscription', {
+    err: '',
+    valeurs: {},
+    type: String(req.query.type || 'patient'),
+    pro: String(req.query.pro || ''),
+    wilayas: getWilayas(),
+    specialites: getSpecialites(),
+  });
+});
+
+// --- Demande de compte professionnel (vérification manuelle sous 48h) ------
+app.post('/inscription-pro', (req, res) => {
+  const type = String(req.body.type || '').trim();
+  const nom = String(req.body.nom_complet || '').trim().slice(0, 120);
+  const etablissement = String(req.body.etablissement || '').trim().slice(0, 160) || null;
+  const specialite = String(req.body.specialite || '').trim().slice(0, 80) || null;
+  const wilaya = String(req.body.wilaya || '').trim().slice(0, 80);
+  const telephone = String(req.body.telephone || '').trim().slice(0, 30);
+  const email = String(req.body.email || '').trim().toLowerCase().slice(0, 160);
+  const message = String(req.body.message || '').trim().slice(0, 500) || null;
+
+  const telOk = /^(\+?213\s?[567]\d{8}|0[567]\d{8})$/.test(telephone.replace(/[\s.-]/g, ''));
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  const typeOk = ['medecin', 'pharmacien'].includes(type);
+  if (!typeOk || nom.length < 2 || !telOk || !emailOk || wilaya.length < 2) {
+    return res.redirect('/inscription?type=pro&pro=invalid#pro');
+  }
+
+  try {
+    db.prepare(
+      `INSERT INTO demandes_pro (type, nom_complet, etablissement, specialite, wilaya, telephone, email, message)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(type, nom, etablissement, specialite, wilaya, telephone, email, message);
+    console.log(`[pro] ${new Date().toISOString()} ← demande ${type} : ${nom} (${wilaya}) ${email}`);
+    notifierDemandePro({ type, nom_complet: nom, etablissement, specialite, wilaya, telephone, email, message }).catch(
+      (e) => console.error('[email] échec notification pro:', e.message)
+    );
+    return res.redirect('/inscription?type=pro&pro=ok#pro');
+  } catch (e) {
+    console.error('[pro] erreur insert:', e);
+    return res.redirect('/inscription?type=pro&pro=err#pro');
+  }
 });
 app.post('/inscription', (req, res) => {
   const { prenom = '', nom = '', email = '', telephone = '', password = '' } = req.body;
   const valeurs = { prenom, nom, email, telephone };
+  const ctxInscription = { type: 'patient', pro: '', wilayas: getWilayas(), specialites: getSpecialites() };
   if (!prenom.trim() || !nom.trim() || !email.trim() || !password) {
-    return res.status(400).render('inscription', { err: res.locals.t('err_fields'), valeurs });
+    return res.status(400).render('inscription', { err: res.locals.t('err_fields'), valeurs, ...ctxInscription });
   }
   const hash = bcrypt.hashSync(password, 10);
   try {
@@ -1031,7 +1127,7 @@ app.post('/inscription', (req, res) => {
     req.session.user = { id: Number(info.lastInsertRowid), prenom: prenom.trim(), nom: nom.trim(), email: email.trim().toLowerCase() };
     res.redirect('/mon-compte');
   } catch (e) {
-    res.status(409).render('inscription', { err: res.locals.t('err_email_taken'), valeurs });
+    res.status(409).render('inscription', { err: res.locals.t('err_email_taken'), valeurs, ...ctxInscription });
   }
 });
 

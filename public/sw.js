@@ -6,7 +6,7 @@
  * BUMP la VERSION à chaque changement structurel : ça force l'activation d'un
  * nouveau SW + delete les vieux caches pour tous les utilisateurs.
  */
-const VERSION = 'afya-v5-2026-07-02';
+const VERSION = 'afya-v6-2026-07-02';
 const ASSETS = [
   '/style.css',
   '/app.js',

@@ -1,12 +1,23 @@
 <%- include('partials/head') %>
 
-<section class="container section narrow">
+<section class="container section narrow" id="pro">
   <div class="card auth-card">
     <h1 class="page-title">🧾 <%= t('register_title') %></h1>
 
+    <!-- Choix du profil -->
+    <div class="role-switch" role="tablist">
+      <button type="button" class="role-btn <%= type !== 'pro' ? 'on' : '' %>" data-role="patient">
+        🧑 <%= t('register_role_patient') %>
+      </button>
+      <button type="button" class="role-btn <%= type === 'pro' ? 'on' : '' %>" data-role="pro">
+        🩺 <%= t('register_role_pro') %>
+      </button>
+    </div>
+
     <% if (err) { %><div class="alert alert-error"><%= err %></div><% } %>
 
-    <form action="/inscription" method="post" class="form">
+    <!-- ============ FORMULAIRE PATIENT ============ -->
+    <form action="/inscription" method="post" class="form" id="form-patient" <%= type === 'pro' ? 'hidden' : '' %>>
       <div class="form-row">
         <label><%= t('prenom') %>
           <input type="text" name="prenom" required value="<%= valeurs.prenom || '' %>" />
@@ -27,8 +38,95 @@
       <button type="submit" class="btn btn-primary btn-block"><%= t('btn_register') %></button>
     </form>
 
+    <!-- ============ FORMULAIRE PRO ============ -->
+    <div id="form-pro" <%= type !== 'pro' ? 'hidden' : '' %>>
+      <% if (pro === 'ok') { %>
+        <div class="pro-success">
+          <div class="pro-success-icon">✓</div>
+          <h2><%= t('pro_request_ok_title') %></h2>
+          <p><%= t('pro_request_ok_desc') %></p>
+          <a href="/" class="btn btn-light"><%= t('back') %></a>
+        </div>
+      <% } else { %>
+        <p class="pro-intro"><%= t('pro_request_intro') %></p>
+
+        <% if (pro === 'invalid' || pro === 'err') { %>
+          <div class="alert alert-error">
+            <%= pro === 'invalid' ? t('pro_request_invalid') : t('pro_request_err') %>
+          </div>
+        <% } %>
+
+        <form action="/inscription-pro" method="post" class="form">
+          <div class="form-row">
+            <label class="pro-type-label">
+              <input type="radio" name="type" value="medecin" checked onchange="document.getElementById('spec-row').hidden=false">
+              🩺 <%= t('pro_type_medecin') %>
+            </label>
+            <label class="pro-type-label">
+              <input type="radio" name="type" value="pharmacien" onchange="document.getElementById('spec-row').hidden=true">
+              💊 <%= t('pro_type_pharmacien') %>
+            </label>
+          </div>
+
+          <label><%= t('pro_nom_complet') %>
+            <input type="text" name="nom_complet" required maxlength="120" placeholder="Dr Karim Benali" />
+          </label>
+
+          <label id="spec-row"><%= t('pro_specialite') %>
+            <select name="specialite">
+              <option value=""><%= t('all_specialites') %></option>
+              <% specialites.forEach(s => { %>
+                <option value="<%= s.nom_fr %>"><%= s.icone %> <%= L(s.nom_fr, s.nom_ar) %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label><%= t('pro_etablissement') %>
+            <input type="text" name="etablissement" maxlength="160" placeholder="<%= t('pro_etablissement_ph') %>" />
+          </label>
+
+          <div class="form-row">
+            <label><%= t('wilaya') %>
+              <select name="wilaya" required>
+                <option value=""><%= t('all_wilayas') %></option>
+                <% wilayas.forEach(w => { %>
+                  <option value="<%= w.nom_fr %>"><%= w.code %> · <%= L(w.nom_fr, w.nom_ar) %></option>
+                <% }) %>
+              </select>
+            </label>
+            <label><%= t('telephone') %>
+              <input type="tel" name="telephone" required placeholder="0555 12 34 56" />
+            </label>
+          </div>
+
+          <label><%= t('email') %>
+            <input type="email" name="email" required />
+          </label>
+
+          <label><%= t('pro_message') %>
+            <textarea name="message" rows="2" maxlength="500" placeholder="<%= t('pro_message_ph') %>"></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-block">📋 <%= t('pro_request_btn') %></button>
+          <p class="pro-fine"><%= t('pro_request_fine') %></p>
+        </form>
+      <% } %>
+    </div>
+
     <p class="auth-alt"><%= t('have_account') %> <a href="/connexion"><%= t('btn_login') %></a></p>
   </div>
 </section>
+
+<script>
+  document.querySelectorAll('.role-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var isPro = btn.dataset.role === 'pro';
+      document.querySelectorAll('.role-btn').forEach(function (b) { b.classList.toggle('on', b === btn); });
+      document.getElementById('form-patient').hidden = isPro;
+      document.getElementById('form-pro').hidden = !isPro;
+      history.replaceState(null, '', isPro ? '/inscription?type=pro' : '/inscription');
+    });
+  });
+</script>
 
 <%- include('partials/foot') %>
