@@ -12,6 +12,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Transitions de page (doit exister des deux côtés de la navigation) */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root) { animation: vt-out .16s ease both; }
+    ::view-transition-new(root) { animation: vt-in .32s cubic-bezier(.2, .7, .3, 1) both; }
+    @keyframes vt-out { to { opacity: 0; } }
+    @keyframes vt-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+    }
+  </style>
 </head>
 <body>
 

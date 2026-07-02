@@ -1309,3 +1309,79 @@ a.card:hover .avatar { transform: rotate(-5deg) scale(1.05); }
   .livraison-row { grid-template-columns: 1fr; gap: 12px; }
   .btn-livraison { width: 100%; }
 }
+
+/* ============================================================
+   Motion v2 — transitions de page + micro-interactions
+   (tout est neutralisé par le bloc prefers-reduced-motion global)
+   ============================================================ */
+
+/* --- Transitions entre pages (View Transitions API, progressif :
+       navigateurs non compatibles = navigation classique) --- */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out .16s ease both; }
+::view-transition-new(root) { animation: vt-in .32s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* Header et footer restent en place pendant la transition (effet app native) */
+.site-header { view-transition-name: afya-header; }
+.site-footer { view-transition-name: afya-footer; }
+
+/* --- Entrée de page : le contenu monte en cascade --- */
+.section .page-title { animation: rise-in .55s var(--ease-out) both; }
+.section .lead { animation: rise-in .55s .06s var(--ease-out) both; }
+.section .filters { animation: rise-in .55s .12s var(--ease-out) both; }
+.section .results-count { animation: rise-in .5s .18s var(--ease-out) both; }
+.section .back-link { animation: rise-in .45s var(--ease-out) both; }
+.empty { animation: rise-in .5s .1s var(--ease-out) both; }
+
+/* --- Cartes : TOUTES les cartes vivent au survol (avant : liens seulement) --- */
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+.card:hover::after { opacity: 1; }
+.card:hover .avatar { transform: rotate(-5deg) scale(1.05); }
+/* Le bouton dans la carte s'accentue quand on survole la carte */
+.card:hover .btn-primary { box-shadow: 0 8px 22px rgba(15, 157, 142, .45); }
+
+/* --- Boutons : enfoncement au clic --- */
+.btn:active { transform: translateY(0) scale(.97); }
+
+/* --- Chips : pop au survol --- */
+.chip { transition: transform .2s var(--ease-out), background .2s, border-color .2s, box-shadow .2s, color .2s; }
+.chip:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(15, 157, 142, .2); }
+.chip:active { transform: translateY(0) scale(.96); }
+
+/* --- Champs des filtres : halo au focus --- */
+.filters input:focus, .filters select:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(15, 157, 142, .16);
+  outline: none;
+}
+.filters input, .filters select { transition: border-color .2s ease, box-shadow .2s ease; }
+
+/* --- Liens nav : soulignement dégradé animé --- */
+.main-nav > a { position: relative; }
+.main-nav > a::after {
+  content: ''; position: absolute; inset-inline: 10px; bottom: 4px; height: 2px;
+  background: var(--gradient-accent); border-radius: 2px;
+  transform: scaleX(0); transform-origin: center;
+  transition: transform .28s var(--ease-out);
+}
+.main-nav > a:hover::after, .main-nav > a.active::after { transform: scaleX(1); }
+
+/* --- Footer : liens qui glissent --- */
+.footer-col a { transition: color .2s ease, padding-inline-start .22s var(--ease-out); }
+.footer-col a:hover { padding-inline-start: 6px; }
+
+/* --- Pagination : boutons réactifs --- */
+.page-btn { transition: transform .2s var(--ease-out), background .2s, border-color .2s, box-shadow .2s; }
+.page-btn:hover:not(.on) { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+/* --- Lien retour : la flèche recule --- */
+.back-link { transition: color .2s ease; }
+.back-link:hover { color: var(--teal-dark); }
+
+/* --- Défilement doux (ancres #livraison etc.) --- */
+html { scroll-behavior: smooth; }
