@@ -215,6 +215,65 @@ function requirePharmacien(req, res, next) {
   next();
 }
 
+/**
+ * Envoie l'email de confirmation de pré-inscription via l'API Brevo.
+ * Sans BREVO_API_KEY (dev local), on log et on n'envoie rien — l'inscription
+ * reste valide, l'email est un plus, jamais un bloqueur.
+ */
+async function envoyerEmailConfirmation(email, prenom) {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) {
+    console.log(`[email] BREVO_API_KEY absente — confirmation non envoyée à ${email}`);
+    return;
+  }
+  const bonjour = prenom ? `Salam ${prenom} 👋` : 'Salam 👋';
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      sender: { name: 'Afya', email: process.env.EMAIL_FROM || 'mohendarzekiamir@gmail.com' },
+      to: [{ email, ...(prenom ? { name: prenom } : {}) }],
+      subject: '✅ Inscription confirmée — Afya arrive bientôt sur iOS et Android',
+      htmlContent: `
+<div style="margin:0;padding:0;background:#f1f8f6;font-family:'Segoe UI',Arial,sans-serif;">
+  <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
+    <div style="background:linear-gradient(135deg,#0A6F66,#16B79E);border-radius:18px;padding:36px 30px;color:#fff;text-align:center;">
+      <div style="font-size:40px;font-weight:900;letter-spacing:-2px;">AFYA<span style="color:#ffb3b3;">.</span></div>
+      <div style="font-size:14px;opacity:.85;margin-top:4px;">عافية · Ta santé, simplifiée</div>
+    </div>
+    <div style="background:#fff;border-radius:18px;padding:32px 28px;margin-top:16px;color:#0e2725;">
+      <h2 style="margin:0 0 12px;font-size:22px;">${bonjour}</h2>
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#33504c;">
+        Ton inscription à la liste d'attente <strong>Afya</strong> est bien confirmée ✅
+        — cette adresse email est la bonne, tu n'as rien d'autre à faire.
+      </p>
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#33504c;">
+        Dès que l'application sera disponible sur <strong>iOS et Android</strong>,
+        tu recevras <strong>un seul email</strong> : celui du lancement. Zéro spam, zéro pub.
+      </p>
+      <p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#33504c;">
+        En attendant, Afya marche déjà dans ton navigateur :
+        médecins, médicaments et pharmacies de garde des 58 wilayas.
+      </p>
+      <div style="text-align:center;">
+        <a href="https://afya-hrqf.onrender.com" style="display:inline-block;background:#0E9C8A;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:12px;text-decoration:none;">Découvrir Afya →</a>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#8fa89b;margin-top:18px;line-height:1.6;">
+      Tu reçois cet email car tu t'es inscrit(e) sur afya-hrqf.onrender.com.<br>
+      Pour te désinscrire, réponds simplement « STOP » à cet email.
+    </p>
+  </div>
+</div>`,
+    }),
+  });
+  if (!r.ok) {
+    const body = await r.text().catch(() => '');
+    throw new Error(`Brevo HTTP ${r.status} — ${body.slice(0, 200)}`);
+  }
+  console.log(`[email] confirmation envoyée à ${email}`);
+}
+
 /** Reconstruit un JSON d'horaires hebdo depuis les champs day_X_m_start/end + day_X_a_start/end. */
 function horairesDepuisForm(body) {
   const out = {};
@@ -1247,6 +1306,10 @@ app.post('/pre-inscription', (req, res) => {
       VALUES (?, ?, ?, ?, ?)
     `).run(email, prenom, okPlateforme, source, ua);
     console.log(`[early-access] ${new Date().toISOString()} ← ${email} (${okPlateforme || 'n/a'}) prenom=${prenom || '-'}`);
+    // Confirmation par email — fire-and-forget : ne bloque jamais la réponse.
+    envoyerEmailConfirmation(email, prenom).catch((e) =>
+      console.error('[email] échec confirmation:', e.message)
+    );
     return res.redirect('/?early=ok#early-access');
   } catch (e) {
     if (String(e.message).toLowerCase().includes('unique')) {
